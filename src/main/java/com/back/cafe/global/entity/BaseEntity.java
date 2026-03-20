@@ -11,6 +11,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * 객체 생성 시 기본적으로 포함해야 할 내용을 담은 추상 클래스
+ */
 @MappedSuperclass
 @Getter
 @EntityListeners(AuditingEntityListener.class)
