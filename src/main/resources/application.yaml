@@ -1,3 +1,5 @@
 spring:
   application:
     name: cafe
+springdoc:
+  default-produces-media-type: application/json; charset=UTF-8
