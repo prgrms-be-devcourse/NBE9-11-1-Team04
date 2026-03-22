@@ -32,7 +32,7 @@ public class OrderController {
     @PostMapping("/user/{userId}")
     public RsData<OrderWriteResBody> createOrder(
             @PathVariable Long userId,
-            @RequestBody @Valid OrderWriteReqBody reqBody, BindingResult bindingResult
+            @RequestBody @Valid OrderWriteReqBody reqBody
     ){
         Order order = orderService.createOrder(userId, reqBody.orderProductRequests);
         return new RsData<>(
