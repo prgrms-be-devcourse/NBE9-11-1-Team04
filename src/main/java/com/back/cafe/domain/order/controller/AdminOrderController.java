@@ -1,9 +1,10 @@
 package com.back.cafe.domain.order.controller;
 
+import com.back.cafe.domain.order.dto.OrderDto;
 import com.back.cafe.domain.order.dto.OrderStatusUpdateRequest;
+import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.service.AdminOrderService;
 import com.back.cafe.global.rsData.RsData;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,20 +26,17 @@ public class AdminOrderController {
      * 관리자 주문 취소 API
      *
      * @param orderId 취소할 주문 ID
-     * @return 처리 결과 응답
+     * @return 취소 처리 후 수정된 주문 정보 응답
      */
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<RsData<Void>> cancelOrder(@PathVariable Long orderId) {
-        adminOrderService.cancelOrder(orderId);
+    public RsData<OrderDto> cancelOrder(@PathVariable Long orderId) {
+        Order order = adminOrderService.cancelOrder(orderId);
 
-        RsData<Void> rsData = new RsData<>(
+        return new RsData<>(
                 "주문이 취소되었습니다.",
-                "200-1"
+                "200-1",
+                new OrderDto(order)
         );
-
-        return ResponseEntity
-                .status(rsData.getStatusCode())
-                .body(rsData);
     }
 
     /**
@@ -46,22 +44,19 @@ public class AdminOrderController {
      *
      * @param orderId 상태를 변경할 주문 ID
      * @param request 변경할 상태값 요청 DTO
-     * @return 처리 결과 응답
+     * @return 상태 변경 후 수정된 주문 정보 응답
      */
     @PutMapping("/{orderId}")
-    public ResponseEntity<RsData<Void>> updateOrderStatus(
+    public RsData<OrderDto> updateOrderStatus(
             @PathVariable Long orderId,
             @RequestBody OrderStatusUpdateRequest request
     ) {
-        adminOrderService.updateOrderStatus(orderId, request.getStatus());
+        Order order = adminOrderService.updateOrderStatus(orderId, request.getStatus());
 
-        RsData<Void> rsData = new RsData<>(
+        return new RsData<>(
                 "주문 상태가 변경되었습니다.",
-                "200-1"
+                "200-1",
+                new OrderDto(order)
         );
-
-        return ResponseEntity
-                .status(rsData.getStatusCode())
-                .body(rsData);
     }
 }
