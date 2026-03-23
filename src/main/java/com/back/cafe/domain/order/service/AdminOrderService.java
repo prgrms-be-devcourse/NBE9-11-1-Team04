@@ -1,8 +1,8 @@
-package com.back.cafe.domain.order.order.service;
+package com.back.cafe.domain.order.service;
 
-import com.back.cafe.domain.order.order.entity.Order;
-import com.back.cafe.domain.order.order.entity.OrderStatus;
-import com.back.cafe.domain.order.order.repository.OrderRepository;
+import com.back.cafe.domain.order.entity.Order;
+import com.back.cafe.domain.order.entity.OrderStatus;
+import com.back.cafe.domain.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

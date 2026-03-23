@@ -1,4 +1,4 @@
-package com.back.cafe.domain.order.order.entity;
+package com.back.cafe.domain.order.entity;
 
 import com.back.cafe.global.entity.BaseEntity;
 import jakarta.persistence.Column;

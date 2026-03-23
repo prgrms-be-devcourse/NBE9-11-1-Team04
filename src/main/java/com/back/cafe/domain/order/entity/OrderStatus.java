@@ -1,4 +1,4 @@
-package com.back.cafe.domain.order.order.entity;
+package com.back.cafe.domain.order.entity;
 
 public enum OrderStatus {
     PENDING,

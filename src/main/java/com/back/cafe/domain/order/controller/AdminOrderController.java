@@ -1,7 +1,7 @@
-package com.back.cafe.domain.order.order.controller;
+package com.back.cafe.domain.order.controller;
 
-import com.back.cafe.domain.order.order.dto.OrderStatusUpdateRequest;
-import com.back.cafe.domain.order.order.service.AdminOrderService;
+import com.back.cafe.domain.order.dto.OrderStatusUpdateRequest;
+import com.back.cafe.domain.order.service.AdminOrderService;
 import com.back.cafe.global.rsData.RsData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

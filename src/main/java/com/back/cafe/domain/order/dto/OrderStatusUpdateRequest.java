@@ -1,4 +1,4 @@
-package com.back.cafe.domain.order.order.dto;
+package com.back.cafe.domain.order.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
