@@ -1,32 +1,37 @@
 package com.back.cafe.domain.order.entity;
 
 import com.back.cafe.global.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "orders")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@Entity
+@NoArgsConstructor
+@Table(name = "orders") // order는 예약어이므로 이름 변경
 public class Order extends BaseEntity {
-
     private Long userId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OrderStatus status;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE},
+            orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
-    private LocalDateTime orderTime;
+    private String status;
 
-    public void changeStatus(OrderStatus status) {
-        this.status = status;
+    private int totalPrice;
+
+    public Order(Long userId){
+        this.userId = userId;
+        this.status = "order-completed"; // default: 주문 완료
+    }
+
+    public void addOrderProduct(OrderProduct orderProduct){
+        this.orderProducts.add(orderProduct);
     }
 }
