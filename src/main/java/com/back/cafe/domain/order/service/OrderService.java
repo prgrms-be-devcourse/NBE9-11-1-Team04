@@ -77,4 +77,8 @@ public class OrderService {
                 .findFirst();
     }
 
+    public List<Order> findByUserId(Long userId){  // 같은 사용자 주문 중 시간대가 맞는 것을 반환해준다
+        return orderRepository.findByUserId(userId);
+    }
+
 }
