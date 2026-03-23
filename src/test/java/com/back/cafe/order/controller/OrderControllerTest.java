@@ -32,7 +32,7 @@ public class OrderControllerTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     @Test
     @DisplayName("주문 신규 생성 테스트")
