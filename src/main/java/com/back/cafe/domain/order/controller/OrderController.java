@@ -1,6 +1,7 @@
 package com.back.cafe.domain.order.controller;
 
 import com.back.cafe.domain.order.dto.OrderDto;
+import com.back.cafe.domain.order.dto.OrderListDto;
 import com.back.cafe.domain.order.dto.OrderProductDto;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.service.OrderService;
@@ -38,6 +39,18 @@ public class OrderController {
                 "%d%s".formatted(order.getId(),msg),
                 resultCode,
                 new OrderDto(order)
+        );
+    }
+
+    @GetMapping("/user/{userId}")
+    public RsData<OrderListDto> getOrderByUser(
+            @PathVariable Long userId
+    ){
+        List<Order>orders = orderService.findByUserId(userId);
+        return new RsData<>(
+                "%d번 유저의 주문이 성공적으로 조회되었습니다.".formatted(userId),
+                "202-1",
+                new OrderListDto(orders.stream().map(OrderDto::new).toList())
         );
     }
 
