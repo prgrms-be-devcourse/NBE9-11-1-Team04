@@ -51,10 +51,8 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
                 .andExpect(jsonPath("$.msg").value("%d번 주문이 생성되었습니다.".formatted(targetId)))
                 .andExpect(jsonPath("$.data.id").value(targetId))
-                .andExpect(jsonPath("$.data.orderProducts[0].productId").value(1))
-                .andExpect(jsonPath("$.data.orderProducts[0].quantity").value(2))
-                .andExpect(jsonPath("$.data.orderProducts[1].productId").value(2))
-                .andExpect(jsonPath("$.data.orderProducts[1].quantity").value(3))
+                .andExpect(jsonPath("$.data.orderProducts[?(@.productId==1)].quantity").value(2))
+                .andExpect(jsonPath("$.data.orderProducts[?(@.productId==2)].quantity").value(3))
                 .andExpect(jsonPath("$.data.status").value("order-completed"));
     }
 
