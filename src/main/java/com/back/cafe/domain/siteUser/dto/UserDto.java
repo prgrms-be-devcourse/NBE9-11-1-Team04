@@ -8,8 +8,8 @@ public record UserDto(
         String address,
         String zipCode
 ){
-    public UserDto(SiteUser siteUser) {
-        this(
+    public static UserDto from(SiteUser siteUser) {
+        return new UserDto(
                 siteUser.getId(),
                 siteUser.getEmail(),
                 siteUser.getAddress(),
