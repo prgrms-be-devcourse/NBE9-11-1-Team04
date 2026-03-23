@@ -1,9 +1,9 @@
-package com.back.cafe.order.controller;
+package com.back.cafe.domain.order.controller;
 
-import com.back.cafe.order.dto.OrderDto;
-import com.back.cafe.order.dto.OrderProductDto;
-import com.back.cafe.order.entity.Order;
-import com.back.cafe.order.service.OrderService;
+import com.back.cafe.domain.order.dto.OrderDto;
+import com.back.cafe.domain.order.dto.OrderProductDto;
+import com.back.cafe.domain.order.entity.Order;
+import com.back.cafe.domain.order.service.OrderService;
 import com.back.cafe.global.rsData.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;

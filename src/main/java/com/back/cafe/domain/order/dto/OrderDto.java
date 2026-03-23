@@ -1,7 +1,7 @@
-package com.back.cafe.order.dto;
+package com.back.cafe.domain.order.dto;
 
-import com.back.cafe.order.entity.Order;
-import com.back.cafe.order.entity.OrderProduct;
+import com.back.cafe.domain.order.entity.Order;
+import com.back.cafe.domain.order.entity.OrderProduct;
 
 import java.time.LocalDateTime;
 import java.util.List;

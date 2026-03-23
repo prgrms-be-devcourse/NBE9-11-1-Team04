@@ -1,5 +1,6 @@
 package com.back.cafe.order.controller;
 
+import com.back.cafe.domain.order.controller.OrderController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

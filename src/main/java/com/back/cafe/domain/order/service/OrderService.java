@@ -1,9 +1,9 @@
-package com.back.cafe.order.service;
+package com.back.cafe.domain.order.service;
 
-import com.back.cafe.order.dto.OrderProductDto;
-import com.back.cafe.order.entity.Order;
-import com.back.cafe.order.entity.OrderProduct;
-import com.back.cafe.order.repository.OrderRepository;
+import com.back.cafe.domain.order.dto.OrderProductDto;
+import com.back.cafe.domain.order.entity.Order;
+import com.back.cafe.domain.order.entity.OrderProduct;
+import com.back.cafe.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
