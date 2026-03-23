@@ -11,7 +11,6 @@ public record ProductDto(
         String description
 ) {
 
-
     public static ProductDto from(Product product) {
         return new ProductDto(
                 product.getId(),

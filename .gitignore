@@ -35,4 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### custom ###
 *.db
+src/main/resources/application.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-test.yml
+

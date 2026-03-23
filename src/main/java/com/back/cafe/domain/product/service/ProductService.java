@@ -13,17 +13,16 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public List<ProductDto> findAllProducts() {
+    public List<ProductDto> findAll() {
         return productRepository.findAll().stream()
                 .map(ProductDto::from)
                 .collect(Collectors.toList());
     }
 
-    public ProductDto findProductById(Long id) {
+    public ProductDto findById(Long id) {
         return productRepository.findById(id)
                 .map(ProductDto::from)
                 // 예외 처리 : 상품이 없는 경우.
                 .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다. ID: " + id));
     }
-
 }

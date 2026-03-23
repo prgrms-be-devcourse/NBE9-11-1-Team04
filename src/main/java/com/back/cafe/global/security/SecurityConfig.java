@@ -16,7 +16,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // POST/PUT 테스트를 위해 CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/**").permitAll() // 일단 모든 요청 허용
-                        .anyRequest().authenticated() // 그 외 요청은 로그인 필요
+                        .anyRequest().authenticated() // 그 외 요청은 제한
                 );
 
         return http.build();

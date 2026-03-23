@@ -1,12 +1,9 @@
 package com.back.cafe.domain.product.controller;
-
 import com.back.cafe.domain.product.dto.ProductDto;
-import com.back.cafe.domain.product.entity.Product;
-import com.back.cafe.domain.product.repository.ProductRepository;
 import com.back.cafe.domain.product.service.ProductService;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,18 +15,21 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
+@Tag(name = "ApiV1ProductController", description = "상품 API")
 public class ProductController {
     private final ProductService productService;
 
     @GetMapping
     @Transactional(readOnly = true)
+    @Operation(summary = "다건 조회")
     public List<ProductDto> getProducts(){
-        return productService.findAllProducts();
+        return productService.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
+    @Operation(summary = "단건 조회")
     public ProductDto getProduct(@PathVariable Long id){
-        return productService.findProductById(id);
+        return productService.findById(id);
     }
 }
