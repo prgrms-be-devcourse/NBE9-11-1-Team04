@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -33,5 +34,10 @@ public class Order extends BaseEntity {
 
     public void addOrderProduct(OrderProduct orderProduct){
         this.orderProducts.add(orderProduct);
+    }
+    public Optional<OrderProduct> checkProduct(Long productId) {
+        return this.orderProducts.stream()
+                .filter(op -> op.getProductId().equals(productId))
+                .findFirst();
     }
 }

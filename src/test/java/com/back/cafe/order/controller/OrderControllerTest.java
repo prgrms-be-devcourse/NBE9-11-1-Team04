@@ -59,4 +59,47 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderProducts[1].quantity").value(3))
                 .andExpect(jsonPath("$.data.status").value("order-completed"));
     }
+
+    @Test
+    @DisplayName("주문 추가 생성 테스트")
+    void t2() throws Exception {
+
+        long userId = 3;
+        long targetId = 2;
+        mvc.perform(post("/api/v1/orders/user/%d".formatted(userId))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                                {
+                                  "orderProductRequests": [
+                                    { "productId": 1, "quantity": 2 },
+                                    { "productId": 2, "quantity": 3 }
+                                  ]
+                                }
+                                """));
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/orders/user/%d".formatted(userId))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": 1, "quantity": 1 },
+                                            { "productId": 4, "quantity": 2 }
+                                          ]
+                                        }
+                                        """)
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("createOrder"))
+                .andExpect(jsonPath("$.resultCode").value("201-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 추가주문이 완료되었습니다.".formatted(targetId)))
+                .andExpect(jsonPath("$.data.id").value(targetId))
+                .andExpect(jsonPath("$.data.orderProducts[?(@.productId==1)].quantity").value(3))
+                .andExpect(jsonPath("$.data.orderProducts[?(@.productId==2)].quantity").value(3))
+                .andExpect(jsonPath("$.data.orderProducts[?(@.productId==4)].quantity").value(2))
+                .andExpect(jsonPath("$.data.status").value("order-completed"));
+    }
 }
