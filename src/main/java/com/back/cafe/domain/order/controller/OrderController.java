@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,18 +30,10 @@ public class OrderController {
             @PathVariable Long userId,
             @RequestBody @Valid OrderWriteReqBody reqBody
     ){
-        Optional<Order> existOrder = orderService.findOrder(userId);
-        if(existOrder.isPresent()){//&&existOrder.get().getCreated_at() == LocalDateTime.now()
-             Order order = orderService.modifyOrder(userId, reqBody.orderProductRequests);
-             return new RsData<>(
-                    "%d번 추가주문이 완료되었습니다.".formatted(order.getId()),
-                    "201-1",
-                    new OrderDto(order)
-            );
-        }
-        Order order = orderService.createOrder(userId, reqBody.orderProductRequests);
+        Order order = orderService.doOrder(userId, reqBody.orderProductRequests);
+        String msg = order.getCreated_at()==order.getModified_at()?"번 주문이 생성되었습니다.":"번 추가주문이 완료되었습니다.";
         return new RsData<>(
-                "%d번 주문이 생성되었습니다.".formatted(order.getId()),
+                "%d%s".formatted(order.getId(),msg),
                 "201-1",
                 new OrderDto(order)
         );

@@ -18,6 +18,15 @@ public class OrderService {
 
 
     @Transactional
+    public Order doOrder(Long userId, List<OrderProductDto> orderProductRequests){
+        Optional<Order> existOrder = findOrder(userId);
+        if(existOrder.isPresent()){
+            return modifyOrder(userId, orderProductRequests);
+        }
+        return createOrder(userId, orderProductRequests);
+    }
+
+    @Transactional
     public Order createOrder(Long userId, List<OrderProductDto> orderProductRequests) {
         Order order = new Order(userId);
 
