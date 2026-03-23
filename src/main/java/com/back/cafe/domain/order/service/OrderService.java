@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,8 +60,22 @@ public class OrderService {
     }
 
     public Optional<Order> findOrder(Long userId){
-        //여기서 시간까지 거를 수 있도록
-        return orderRepository.findByUserId(userId);
+        //시간대 맞는 유저만 필터링 아직 안함!
+        LocalDateTime start,end;
+        LocalDateTime today2pm = LocalDateTime.now().with(LocalTime.of(14, 0, 0, 0)); //오늘 2시
+        if (LocalDateTime.now().isAfter(today2pm)) {
+            start = today2pm;
+            end = today2pm.plusDays(1);
+        } else {
+            start = today2pm.minusDays(1);
+            end = today2pm;
+        }
+        return orderRepository.findByUserId(userId).stream()
+                .filter(order-> {
+                    LocalDateTime created_at = order.getCreated_at();
+                    return created_at.isAfter(start) && created_at.isBefore(end);
+                })
+                .findFirst();
     }
 
 }
