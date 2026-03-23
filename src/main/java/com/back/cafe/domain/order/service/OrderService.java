@@ -59,14 +59,13 @@ public class OrderService {
         return order;
     }
 
-    public Optional<Order> findOrder(Long userId){
-        //시간대 맞는 유저만 필터링 아직 안함!
+    public Optional<Order> findOrder(Long userId){  // 같은 사용자 주문 중 시간대가 맞는 것을 반환해준다
         LocalDateTime start,end;
-        LocalDateTime today2pm = LocalDateTime.now().with(LocalTime.of(14, 0, 0, 0)); //오늘 2시
-        if (LocalDateTime.now().isAfter(today2pm)) {
+        LocalDateTime today2pm = LocalDateTime.now().with(LocalTime.of(14, 0, 0, 0)); //오늘 오후 2시
+        if (LocalDateTime.now().isAfter(today2pm)) {// 지금 시간이 오후 2시 이후라면, 오후 2시 이후 주문을 찾는다
             start = today2pm;
             end = today2pm.plusDays(1);
-        } else {
+        } else {                                    // 오후 2시 이전이라면, 어제 오후 2시 - 오늘 오후 2시 사이의 주문을 찾는다
             start = today2pm.minusDays(1);
             end = today2pm;
         }
