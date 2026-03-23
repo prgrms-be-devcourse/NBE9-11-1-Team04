@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,4 +30,27 @@ public class OrderService {
         orderRepository.save(order);
         return order;
     }
+
+    @Transactional
+    public Order modifyOrder(Long userId, List<OrderProductDto> orderProductRequests) {
+        Order order = findOrder(userId).get(); //기존 order
+        for(OrderProductDto dto : orderProductRequests){ // OrderProductDto -> OrderProduct 생성/추가, Order에 반영
+            if(!order.checkProduct(dto.productId()).isEmpty()){  //이미 갖고 있는 product라면 quantity만 +
+                OrderProduct orderProduct = order.checkProduct(dto.productId()).get();
+                orderProduct.setQuantity(orderProduct.getQuantity()+dto.quantity());
+
+            }else{ //없다면 생성
+                OrderProduct newProduct = new OrderProduct(dto.productId(), dto.quantity());
+                order.addOrderProduct(newProduct);
+            }
+        }
+        orderRepository.save(order);
+        return order;
+    }
+
+    public Optional<Order> findOrder(Long userId){
+        //여기서 시간까지 거를 수 있도록
+        return orderRepository.findByUserId(userId);
+    }
+
 }
