@@ -1,6 +1,7 @@
 package com.back.cafe.domain.product.dto;
 
 import com.back.cafe.domain.product.entity.Product;
+import java.time.LocalDateTime;
 
 public record ProductDto(
         Long id,
@@ -8,7 +9,10 @@ public record ProductDto(
         Long price,
         String category,
         int stock,
-        String description
+        String description,
+        String imageUrl,
+        LocalDateTime created_at,
+        LocalDateTime modified_at
 ) {
 
     public static ProductDto from(Product product) {
@@ -18,7 +22,10 @@ public record ProductDto(
                 product.getPrice(),
                 product.getCategory(),
                 product.getStock(),
-                product.getDescription()
+                product.getDescription(),
+                product.getImageUrl(),
+                product.getCreated_at(),
+                product.getModified_at()
         );
     }
 }

@@ -23,11 +23,15 @@ public class Product extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description; // 상품 설명
 
-    public Product(String name, String category, Long price, int stock, String description) {
+    @Column(nullable = true)
+    private String imageUrl;
+
+    public Product(String name, String category, Long price, int stock, String description, String imageUrl) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.stock = stock;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
 }
