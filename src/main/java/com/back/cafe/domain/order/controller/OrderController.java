@@ -26,7 +26,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping("/user/{userId}")
-    public RsData<OrderDto> createOrder(
+    public RsData<OrderDto> createUpdateOrder(
             @PathVariable Long userId,
             @RequestBody @Valid OrderWriteReqBody reqBody
     ){

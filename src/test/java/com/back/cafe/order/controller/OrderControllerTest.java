@@ -47,7 +47,7 @@ public class OrderControllerTest {
 
         resultActions
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("createOrder"))
+                .andExpect(handler().methodName("createUpdateOrder"))
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
                 .andExpect(jsonPath("$.msg").value("%d번 주문이 생성되었습니다.".formatted(targetId)))
                 .andExpect(jsonPath("$.data.id").value(targetId))
@@ -92,7 +92,7 @@ public class OrderControllerTest {
                 .andDo(print());
         resultActions
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("createOrder"))
+                .andExpect(handler().methodName("createUpdateOrder"))
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
                 .andExpect(jsonPath("$.msg").value("%d번 추가주문이 완료되었습니다.".formatted(targetId)))
                 .andExpect(jsonPath("$.data.id").value(targetId))
