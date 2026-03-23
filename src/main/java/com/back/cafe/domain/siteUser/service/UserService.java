@@ -14,6 +14,7 @@ public class UserService {
 
     public SiteUser createUser(String email, String address, String zipCode) {
         SiteUser siteUser = new SiteUser(email,address,zipCode);
+        userRepository.save(siteUser);
         return siteUser;
     }
 }
