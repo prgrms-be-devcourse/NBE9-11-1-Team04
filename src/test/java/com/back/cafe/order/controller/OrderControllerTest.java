@@ -64,7 +64,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.id").value(targetId))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==1)].quantity").value(2))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==2)].quantity").value(3))
-                .andExpect(jsonPath("$.data.status").value("order-completed"));
+                .andExpect(jsonPath("$.data.status").value("PENDING"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==1)].quantity").value(3))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==2)].quantity").value(3))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==4)].quantity").value(2))
-                .andExpect(jsonPath("$.data.status").value("order-completed"));
+                .andExpect(jsonPath("$.data.status").value("PENDING"));
     }
     @Test
     @DisplayName("전날 오후 2시 이전 주문 테스트")
@@ -161,7 +161,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.id").value(targetId+1))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==2)].quantity").value(1))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==3)].quantity").value(2))
-                .andExpect(jsonPath("$.data.status").value("order-completed"));
+                .andExpect(jsonPath("$.data.status").value("PENDING"));
     }
 
 }
