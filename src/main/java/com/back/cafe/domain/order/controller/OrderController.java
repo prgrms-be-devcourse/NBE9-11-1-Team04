@@ -24,10 +24,6 @@ public class OrderController {
             List<OrderProductDto> orderProductRequests
     ){}
 
-    record OrderWriteResBody(
-            Order order
-    ){}
-
     // 주문 생성
     @PostMapping("/user/{userId}")
     public RsData<OrderDto> createOrder(
