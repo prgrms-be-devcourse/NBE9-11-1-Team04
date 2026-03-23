@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 public class UserCreateDto {
 
     public record UserCreateReqBody(
-            String email,
-            String address,
-            String zipCode
+            @NotBlank(message = "이메일은 필수입니다.") String email,
+            @NotBlank(message = "주소는 필수입니다.") String address,
+            @NotBlank(message = "우편번호는 필수입니다.") String zipCode
     ) {}
 
     public record UserCreateResBody(

@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping
     public RsData<UserCreateDto.UserCreateResBody> create(
-            @RequestBody UserCreateDto.UserCreateReqBody reqBody
+            @RequestBody @Valid UserCreateDto.UserCreateReqBody reqBody
     ) {
         SiteUser siteUser = userService.createUser(reqBody.email(), reqBody.address(), reqBody.zipCode());
 
