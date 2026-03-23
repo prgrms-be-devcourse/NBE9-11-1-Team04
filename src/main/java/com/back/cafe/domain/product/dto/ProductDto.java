@@ -24,8 +24,8 @@ public record ProductDto(
                 product.getStock(),
                 product.getDescription(),
                 product.getImageUrl(),
-                product.getCreated_at(),
-                product.getModified_at()
+                product.getCreatedAt(),
+                product.getModifiedAt()
         );
     }
 }
