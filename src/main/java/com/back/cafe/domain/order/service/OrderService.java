@@ -15,13 +15,17 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
 
+
     @Transactional
     public Order createOrder(Long userId, List<OrderProductDto> orderProductRequests) {
         Order order = new Order(userId);
-        for(OrderProductDto dto : orderProductRequests){ // OrderProductDto -> OrderProduct 생성, Order에 추가
+
+        for (OrderProductDto dto : orderProductRequests) {
+            // 요청 DTO를 주문 상품 엔티티로 변환한 뒤 주문에 추가
             OrderProduct orderProduct = new OrderProduct(dto.productId(), dto.quantity());
             order.addOrderProduct(orderProduct);
         }
+
         orderRepository.save(order);
         return order;
     }

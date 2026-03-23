@@ -1,0 +1,62 @@
+package com.back.cafe.domain.order.controller;
+
+import com.back.cafe.domain.order.dto.OrderDto;
+import com.back.cafe.domain.order.dto.OrderStatusUpdateRequest;
+import com.back.cafe.domain.order.entity.Order;
+import com.back.cafe.domain.order.service.AdminOrderService;
+import com.back.cafe.global.rsData.RsData;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 관리자 주문 상태 제어 API를 담당하는 컨트롤러
+ * - 주문 취소
+ * - 주문 상태 변경
+ */
+@RestController
+@RequestMapping("/api/v1/admin/orders")
+public class AdminOrderController {
+
+    private final AdminOrderService adminOrderService;
+
+    public AdminOrderController(AdminOrderService adminOrderService) {
+        this.adminOrderService = adminOrderService;
+    }
+
+    /**
+     * 관리자 주문 취소 API
+     *
+     * @param orderId 취소할 주문 ID
+     * @return 취소 처리 후 수정된 주문 정보 응답
+     */
+    @DeleteMapping("/{orderId}")
+    public RsData<OrderDto> cancelOrder(@PathVariable Long orderId) {
+        Order order = adminOrderService.cancelOrder(orderId);
+
+        return new RsData<>(
+                "주문이 취소되었습니다.",
+                "200-1",
+                new OrderDto(order)
+        );
+    }
+
+    /**
+     * 관리자 주문 상태 변경 API
+     *
+     * @param orderId 상태를 변경할 주문 ID
+     * @param request 변경할 상태값 요청 DTO
+     * @return 상태 변경 후 수정된 주문 정보 응답
+     */
+    @PutMapping("/{orderId}")
+    public RsData<OrderDto> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody OrderStatusUpdateRequest request
+    ) {
+        Order order = adminOrderService.updateOrderStatus(orderId, request.getStatus());
+
+        return new RsData<>(
+                "주문 상태가 변경되었습니다.",
+                "200-1",
+                new OrderDto(order)
+        );
+    }
+}
