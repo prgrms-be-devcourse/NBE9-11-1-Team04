@@ -102,7 +102,7 @@ public class OrderControllerTest {
         resultActions
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("createUpdateOrder"))
-                .andExpect(jsonPath("$.resultCode").value("201-1"))
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.msg").value("%d번 추가주문이 완료되었습니다.".formatted(targetId)))
                 .andExpect(jsonPath("$.data.id").value(targetId))
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==1)].quantity").value(3))

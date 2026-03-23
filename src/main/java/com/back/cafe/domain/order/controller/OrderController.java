@@ -31,10 +31,12 @@ public class OrderController {
             @RequestBody @Valid OrderWriteReqBody reqBody
     ){
         Order order = orderService.doOrder(userId, reqBody.orderProductRequests);
-        String msg = order.getCreated_at()==order.getModified_at()?"번 주문이 생성되었습니다.":"번 추가주문이 완료되었습니다.";
+        boolean created = order.getCreated_at() == order.getModified_at();
+        String msg = created?"번 주문이 생성되었습니다.":"번 추가주문이 완료되었습니다.";
+        String resultCode = created?"201-1":"200-1";
         return new RsData<>(
                 "%d%s".formatted(order.getId(),msg),
-                "201-1",
+                resultCode,
                 new OrderDto(order)
         );
     }
