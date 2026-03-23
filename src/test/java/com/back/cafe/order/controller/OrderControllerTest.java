@@ -10,17 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Transactional
 public class OrderControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -76,6 +74,8 @@ public class OrderControllerTest {
                                   ]
                                 }
                                 """));
+        Thread.sleep(1000);
+
         ResultActions resultActions = mvc
                 .perform(
                         post("/api/v1/orders/user/%d".formatted(userId))
@@ -90,7 +90,6 @@ public class OrderControllerTest {
                                         """)
                 )
                 .andDo(print());
-
         resultActions
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("createOrder"))
