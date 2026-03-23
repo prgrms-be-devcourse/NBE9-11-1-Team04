@@ -15,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
 @Tag(name = "ApiV1ProductController", description = "상품 API")
-
 public class ProductController {
     private final ProductService productService;
 
