@@ -47,8 +47,8 @@ public class OrderController {
     public OrderListDto getOrderByUser(
             @PathVariable Long userId
     ){
-        List<Order>orders = orderService.findByUserId(userId);
-        return new OrderListDto(orders.stream().map(OrderDto::new).toList());
+        List<OrderDto>orderDtos = orderService.findByUserId(userId);
+        return new OrderListDto(orderDtos);
     }
 
 }
