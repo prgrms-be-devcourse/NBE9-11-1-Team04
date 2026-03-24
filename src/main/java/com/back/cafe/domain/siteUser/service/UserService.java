@@ -17,10 +17,8 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
 
-    public SiteUser createUser(String email, String address, String zipCode) {
-        SiteUser siteUser = new SiteUser(email,address,zipCode);
-        userRepository.save(siteUser);
-        return siteUser;
+    public SiteUser createUser(SiteUser siteUser) {
+        return userRepository.save(siteUser);
     }
 
     public List<UserDto> findAll() {
