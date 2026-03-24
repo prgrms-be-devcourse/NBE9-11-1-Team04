@@ -33,4 +33,12 @@ public class ProductService {
         Product product = new Product(name,category,price,stock,description,imageUrl);
         return ProductDto.from(productRepository.save(product));
     }
+
+    @Transactional
+    public void delete(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("삭제하고자 하는 상품이 없습니다."));
+
+        productRepository.delete(product);
+    }
 }
