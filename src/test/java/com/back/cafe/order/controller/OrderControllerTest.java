@@ -178,16 +178,18 @@ public class OrderControllerTest {
         long targetId = 5;
 
         // 테스트를 위한 기존 주문
-        mvc.perform(post("/api/v1/orders/user/%d".formatted(userId))
+        mvc.perform(post("/api/v1/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                                 {
                                   "orderProductRequests": [
                                     { "productId": 1, "quantity": 2 },
                                     { "productId": 2, "quantity": 3 }
-                                  ]
+                                  ],
+                                  "userId":%d
                                 }
-                                """));
+                                """.formatted(userId))
+                );
 
         // userId에 맞는 주문 조회
         ResultActions resultActions = mvc
