@@ -31,11 +31,11 @@ public class UserService {
     public UserDto findById(Long id) {
         return userRepository.findById(id)
                 .map(UserDto::from)
-                .orElseThrow(()->new IllegalArgumentException("상품이 없습니다. ID:"+id));
+                .orElseThrow(()->new IllegalArgumentException("해당 유저가 없습니다. ID:"+id));
     }
 
     public UserDto delete(Long id) {
-        SiteUser deleteUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));;
+        SiteUser deleteUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다.ID:"+id));;
         userRepository.delete(deleteUser);
         return UserDto.from(deleteUser);
     }
