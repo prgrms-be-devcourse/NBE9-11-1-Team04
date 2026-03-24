@@ -192,12 +192,10 @@ public class OrderControllerTest {
         resultActions
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("getOrderByUser"))
-                .andExpect(jsonPath("$.resultCode").value("202-1"))
-                .andExpect(jsonPath("$.msg").value("%d번 유저의 주문이 성공적으로 조회되었습니다.".formatted(userId)))
-                .andExpect(jsonPath("$.data.orderDtos[0].id").value(targetId))
-                .andExpect(jsonPath("$.data.orderDtos[0].orderProducts[?(@.productId==1)].quantity").value(2))
-                .andExpect(jsonPath("$.data.orderDtos[0].orderProducts[?(@.productId==2)].quantity").value(3))
-                .andExpect(jsonPath("$.data.orderDtos[0].status").value("PENDING"));
+                .andExpect(jsonPath("$.orderDtos[0].id").value(targetId))
+                .andExpect(jsonPath("$.orderDtos[0].orderProducts[?(@.productId==1)].quantity").value(2))
+                .andExpect(jsonPath("$.orderDtos[0].orderProducts[?(@.productId==2)].quantity").value(3))
+                .andExpect(jsonPath("$.orderDtos[0].status").value("PENDING"));
     }
 
 
