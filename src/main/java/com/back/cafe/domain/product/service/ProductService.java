@@ -1,6 +1,7 @@
 package com.back.cafe.domain.product.service;
 
 import com.back.cafe.domain.product.dto.ProductDto;
+import com.back.cafe.domain.product.dto.ServiceModifyProductDto;
 import com.back.cafe.domain.product.entity.Product;
 import com.back.cafe.domain.product.repository.ProductRepository;
 import lombok.AllArgsConstructor;
@@ -46,10 +47,16 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto modify(Long id,String name, String category, Long price, Integer stock, String description, String imageUrl){
+    public ProductDto modify(Long id, ServiceModifyProductDto serviceModifyProductDto){
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("수정하고자 하는 상품이 존재하지 않습니다."));
-        product.update(name,category,price,stock,description,imageUrl);
+        product.update(
+                serviceModifyProductDto.name(),
+                serviceModifyProductDto.category(),
+                serviceModifyProductDto.price(),
+                serviceModifyProductDto.stock(),
+                serviceModifyProductDto.description(),
+                serviceModifyProductDto.imageUrl());
         return ProductDto.from(product);
 
 

@@ -1,14 +1,12 @@
 package com.back.cafe.domain.product.controller;
 
 import com.back.cafe.domain.product.dto.ProductDto;
-import com.back.cafe.domain.product.entity.Product;
+import com.back.cafe.domain.product.dto.ProductModifyRequest;
 import com.back.cafe.domain.product.service.ProductService;
 import com.back.cafe.global.rsData.RsData;
-import com.oracle.svm.core.annotate.Delete;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -89,30 +87,13 @@ public class ProductController {
         );
     }
 
-    record ProductModifyReqBody(
-            String name,
-            String category,
-            Long price,
-            Integer stock,
-            String description,
-            String imageUrl
-    ) {
-    }
 
     @PutMapping("/{id}")
     public RsData<ProductDto> modify(
             @PathVariable Long id,
-            @RequestBody ProductModifyReqBody reqBody
+            @RequestBody @Valid ProductModifyRequest reqBody
     ) {
-        ProductDto productDto = productService.modify(
-                id,
-                reqBody.name(),
-                reqBody.category(),
-                reqBody.price(),
-                reqBody.stock(),
-                reqBody.description(),
-                reqBody.imageUrl()
-        );
+        ProductDto productDto = productService.modify(id,reqBody.toServiceDto());
 
         return new RsData<>(
                 "%d번 상품이 수정되었습니다.".formatted(productDto.id()),
