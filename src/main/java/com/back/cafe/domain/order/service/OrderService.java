@@ -1,6 +1,8 @@
 package com.back.cafe.domain.order.service;
 
+import com.back.cafe.domain.order.dto.OrderDto;
 import com.back.cafe.domain.order.dto.OrderProductDto;
+import com.back.cafe.domain.order.dto.OrderServiceResponse;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.entity.OrderProduct;
 import com.back.cafe.domain.order.repository.OrderRepository;
@@ -17,15 +19,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-
-
     @Transactional
-    public Order doOrder(Long userId, List<OrderProductDto> orderProductRequests){
+    public OrderServiceResponse doOrder(Long userId, List<OrderProductDto> orderProductRequests){
         Optional<Order> existOrder = findOrder(userId);
+        Order order;
+        boolean created;
         if(existOrder.isPresent()){
-            return modifyOrder(userId, orderProductRequests);
+            order = modifyOrder(userId, orderProductRequests);
+            created = false;
+        }else{
+            order = createOrder(userId, orderProductRequests);
+            created = true;
         }
-        return createOrder(userId, orderProductRequests);
+        return new OrderServiceResponse(order,created);
     }
 
     @Transactional
@@ -75,6 +81,11 @@ public class OrderService {
                     return created_at.isAfter(start) && created_at.isBefore(end);
                 })
                 .findFirst();
+    }
+
+    public List<OrderDto> findByUserId(Long userId){  // 같은 사용자 주문 중 시간대가 맞는 것을 반환해준다
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream().map(OrderDto::new).toList();
     }
 
 }
