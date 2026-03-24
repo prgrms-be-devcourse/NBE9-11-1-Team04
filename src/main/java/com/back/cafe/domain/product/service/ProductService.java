@@ -1,13 +1,17 @@
 package com.back.cafe.domain.product.service;
 
 import com.back.cafe.domain.product.dto.ProductDto;
+import com.back.cafe.domain.product.dto.ServiceModifyProductDto;
 import com.back.cafe.domain.product.entity.Product;
 import com.back.cafe.domain.product.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,5 +44,21 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("삭제하고자 하는 상품이 없습니다."));
 
         productRepository.delete(product);
+    }
+
+    @Transactional
+    public ProductDto modify(Long id, ServiceModifyProductDto serviceModifyProductDto){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("수정하고자 하는 상품이 존재하지 않습니다."));
+        product.update(
+                serviceModifyProductDto.name(),
+                serviceModifyProductDto.category(),
+                serviceModifyProductDto.price(),
+                serviceModifyProductDto.stock(),
+                serviceModifyProductDto.description(),
+                serviceModifyProductDto.imageUrl());
+        return ProductDto.from(product);
+
+
     }
 }

@@ -6,11 +6,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.NoSuchElementException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<RsData<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new RsData<>(
+                        e.getMessage(),
+                        "404-1"
+                ));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<RsData<Void>> handlerNoSucjElementException(NoSuchElementException e){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new RsData<>(
