@@ -2,6 +2,7 @@ package com.back.cafe.domain.product.controller;
 import com.back.cafe.domain.product.dto.ProductDto;
 import com.back.cafe.domain.product.service.ProductService;
 import com.back.cafe.global.rsData.RsData;
+import com.oracle.svm.core.annotate.Delete;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +69,16 @@ public class ProductController {
                 "%d번 상품이 생성되었습니다".formatted(productDto.id()),
                 "201-1",
                 productDto
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary="관리자 상품 제거")
+    public RsData<Void> deleteProduct(@PathVariable long id){
+        productService.delete(id);
+        return new RsData<>(
+                "%번 상품이 삭제되었습니다".formatted(id),
+                "200-1"
         );
     }
 }

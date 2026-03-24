@@ -33,4 +33,9 @@ public class ProductService {
         Product product = new Product(name,category,price,stock,description,imageUrl);
         return ProductDto.from(productRepository.save(product));
     }
+
+    @Transactional
+    public void delete(Long id){
+        productRepository.deleteById(id);
+    }
 }
