@@ -5,7 +5,15 @@ import com.back.cafe.domain.order.dto.OrderStatusUpdateRequest;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.service.AdminOrderService;
 import com.back.cafe.global.rsData.RsData;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 관리자 주문 상태 제어 API를 담당하는 컨트롤러
@@ -59,4 +67,69 @@ public class AdminOrderController {
                 new OrderDto(order)
         );
     }
+
+    /**
+     * 전체 주문 목록 조회
+     * GET /api/v1/orders?page=0&size=10
+     * @param pageable 페이지 정보
+     * @return 응답 데이터
+     */
+    @GetMapping
+    public RsData<Page<OrderDto>> getOrders(
+            @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ){
+        Page<OrderDto> orders = adminOrderService.findAll(pageable);
+        return new RsData<>(
+                "모든 주문을 성공적으로 조회하였습니다.",
+                "200-1",
+                orders
+        );
+    }
+
+    /**
+     * 기간 별 주문 목록 조회
+     * GET /api/v1/orders/period?startDate=2026-03-01&endDate=2026-03-24
+     * @param pageable 페이지 정보
+     * @return 응답 데이터
+     */
+    @GetMapping("/period")
+    public RsData<Page<OrderDto>> getOrdersByPeriod(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        //시작일과 종료일 다음날값을 LocalDateTime으로 타입 변환
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
+
+        Page<OrderDto> orders = adminOrderService.findByOrderedAt(startDateTime, endDateTime, pageable);
+
+        return new RsData<>(
+                "기간 별 주문 목록을 성공적으로 조회하였습니다.",
+                "200-1",
+                orders
+        );
+    }
+
+    /**
+     * 유저 별 주문 목록 조회
+     * GET /api/v1/orders/user/{userId}
+     * @param userId 유저 아이디
+     * @param pageable 페이지 정보
+     * @return 유저 별 주문 목록
+     */
+    @GetMapping("/user/{userId}")
+    public RsData<Page<OrderDto>> getOrdersByUserId(
+            @PathVariable("userId") long userId,
+            @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ){
+        Page<OrderDto> orders = adminOrderService.findByUserId(userId,pageable);
+        return new RsData<>(
+                "유저 별 주문 목록을 성공적으로 조회하였습니다.",
+                "200-1",
+                orders
+        );
+    }
+
 }
