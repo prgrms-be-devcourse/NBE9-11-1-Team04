@@ -1,10 +1,12 @@
 package com.back.cafe.domain.siteUser.controller;
 
+import com.back.cafe.domain.product.dto.ProductDto;
 import com.back.cafe.domain.siteUser.dto.UserCreateDto;
 import com.back.cafe.domain.siteUser.dto.UserDto;
 import com.back.cafe.domain.siteUser.entity.SiteUser;
 import com.back.cafe.domain.siteUser.service.UserService;
 import com.back.cafe.global.rsData.RsData;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,12 @@ public class UserController {
     @Transactional(readOnly = true)
     public List<UserDto> getUsers(){return userService.findAll();}
 
+    @GetMapping("/{id}")
+    @Transactional(readOnly = true)
+    public UserDto getUser(@PathVariable Long id){
+        return userService.findById(id);
+    }
+
     @PostMapping
     public RsData<UserCreateDto.UserCreateResBody> create(
             @RequestBody @Valid UserCreateDto.UserCreateReqBody reqBody
@@ -34,4 +42,5 @@ public class UserController {
                 new UserCreateDto.UserCreateResBody(UserDto.from(siteUser))
         );
     }
+
 }
