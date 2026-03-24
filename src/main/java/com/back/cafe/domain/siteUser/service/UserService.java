@@ -32,4 +32,8 @@ public class UserService {
                 .map(UserDto::from)
                 .orElseThrow(()->new IllegalArgumentException("상품이 없습니다. ID:"+id));
     }
+
+    public void delete(UserDto user) {
+        userRepository.deleteById(user.id());
+    }
 }

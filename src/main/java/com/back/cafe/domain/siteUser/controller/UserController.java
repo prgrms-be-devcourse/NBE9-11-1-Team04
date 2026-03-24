@@ -68,4 +68,19 @@ public class UserController {
                 new UserCreateRes(UserDto.from(siteUser))
         );
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "유저 삭제")
+    public RsData<UserDto> deleteUser(
+            @PathVariable Long id
+    ) {
+        UserDto user = userService.findById(id);
+        userService.delete(user);
+
+        return new RsData<UserDto>(
+                "유저 삭제 완료",
+                "200-1",
+                user
+        );
+    }
 }
