@@ -91,7 +91,7 @@ class ApiProductCRUDContollerTest {
                 .andExpect(handler().methodName("deleteProduct"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.msg").value("%d번 상품이 삭제되었습니다".formatted(targetId)));
+                .andExpect(jsonPath("$.msg").value("%d번 상품이 삭제 되었습니다".formatted(targetId)));
 
         Product product = productRepository.findById(targetId).orElse(null);
         assertThat(product).isNull();
