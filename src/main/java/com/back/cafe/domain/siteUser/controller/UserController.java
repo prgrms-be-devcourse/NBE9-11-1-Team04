@@ -61,11 +61,11 @@ public class UserController {
     public RsData<UserCreateRes> create(
             @RequestBody @Valid UserCreateReq reqBody
     ) {
-        SiteUser siteUser = userService.createUser(reqBody.toEntity());
+        UserDto userDto = userService.createUser(reqBody.toEntity());
         return new RsData<>(
                 "유저 등록 완료",
                 "201-1",
-                new UserCreateRes(UserDto.from(siteUser))
+                new UserCreateRes(userDto)
         );
     }
 
@@ -74,13 +74,12 @@ public class UserController {
     public RsData<UserDto> deleteUser(
             @PathVariable Long id
     ) {
-        UserDto user = userService.findById(id);
-        userService.deleteById(user.id());
+        UserDto deleteUser = userService.delete(id);
 
         return new RsData<UserDto>(
                 "유저 삭제 완료",
                 "200-1",
-                user
+                deleteUser
         );
     }
 }
