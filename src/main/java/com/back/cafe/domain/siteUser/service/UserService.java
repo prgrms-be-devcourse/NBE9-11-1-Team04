@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
 
-    public SiteUser createUser(SiteUser siteUser) {
-        return userRepository.save(siteUser);
+    public UserDto createUser(SiteUser siteUser) {
+        userRepository.save(siteUser);
+        return UserDto.from(siteUser);
     }
 
     public List<UserDto> findAll() {
@@ -33,7 +34,9 @@ public class UserService {
                 .orElseThrow(()->new IllegalArgumentException("상품이 없습니다. ID:"+id));
     }
 
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
+    public UserDto delete(Long id) {
+        SiteUser deleteUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));;
+        userRepository.delete(deleteUser);
+        return UserDto.from(deleteUser);
     }
 }
