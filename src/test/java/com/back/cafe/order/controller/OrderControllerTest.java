@@ -44,16 +44,17 @@ public class OrderControllerTest {
 
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/orders/user/%d".formatted(userId))
+                        post("/api/v1/orders")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
                                           "orderProductRequests": [
                                             { "productId": 1, "quantity": 2 },
                                             { "productId": 2, "quantity": 3 }
-                                          ]
+                                          ],
+                                          "userId":%d
                                         }
-                                        """)
+                                        """.formatted(userId))
                 )
                 .andDo(print());
 
@@ -74,30 +75,33 @@ public class OrderControllerTest {
 
         long userId = 3;
         long targetId = 2;
-        mvc.perform(post("/api/v1/orders/user/%d".formatted(userId))
+        mvc.perform(post("/api/v1/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                                 {
                                   "orderProductRequests": [
                                     { "productId": 1, "quantity": 2 },
                                     { "productId": 2, "quantity": 3 }
-                                  ]
+                                  ],
+                                  "userId":%d
                                 }
-                                """));
+                                """.formatted(userId))
+        );
         Thread.sleep(1000);
 
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/orders/user/%d".formatted(userId))
+                        post("/api/v1/orders")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
                                           "orderProductRequests": [
                                             { "productId": 1, "quantity": 1 },
                                             { "productId": 4, "quantity": 2 }
-                                          ]
+                                          ],
+                                          "userId":%d
                                         }
-                                        """)
+                                        """.formatted(userId))
                 )
                 .andDo(print());
         resultActions
@@ -118,16 +122,18 @@ public class OrderControllerTest {
         long targetId = 3;
 
         // 테스트를 위한 기존 주문
-        mvc.perform(post("/api/v1/orders/user/%d".formatted(userId))
+        mvc.perform(post("/api/v1/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                                 {
                                   "orderProductRequests": [
                                     { "productId": 1, "quantity": 2 },
                                     { "productId": 2, "quantity": 3 }
-                                  ]
+                                  ],
+                                  "userId":%d
                                 }
-                                """));
+                                """.formatted(userId))
+        );
 
         // 테스트 시간과 별도로 주문 시간 변경 -> 전날 오후 1시 (전날 오후 2시 이전)
         LocalDateTime yesterday1PM = LocalDateTime.now()
@@ -142,16 +148,17 @@ public class OrderControllerTest {
         // 신규 주문
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/orders/user/%d".formatted(userId))
+                        post("/api/v1/orders")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
                                           "orderProductRequests": [
                                             { "productId": 2, "quantity": 1 },
                                             { "productId": 3, "quantity": 2 }
-                                          ]
+                                          ],
+                                          "userId":%d
                                         }
-                                        """)
+                                        """.formatted(userId))
                 )
                 .andDo(print());
         resultActions
