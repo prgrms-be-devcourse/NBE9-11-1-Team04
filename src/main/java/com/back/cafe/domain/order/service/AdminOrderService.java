@@ -68,6 +68,18 @@ public class AdminOrderService {
     }
 
     /**
+     * 유저 별 주문 목록 조회 + 페이징 로직
+     * @param userId 유저 아이디
+     * @param pageable 페이지 정보
+     * @return 유져 별 주문 정보 Dto Page
+     */
+    public Page<OrderDto> findByUserId(Long userId, Pageable pageable){
+
+        return orderRepository.findByUserId(userId,pageable)
+                .map(OrderDto::new);
+    }
+
+    /**
      *
      * @param start 시작
      * @param end 끝
