@@ -77,7 +77,7 @@ public class ProductController {
     public RsData<Void> deleteProduct(@PathVariable long id){
         productService.delete(id);
         return new RsData<>(
-                "%번 상품이 삭제되었습니다".formatted(id),
+                "%d번 상품이 삭제되었습니다".formatted(id),
                 "200-1"
         );
     }

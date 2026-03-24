@@ -1,6 +1,7 @@
 package com.back.cafe.domain.product;
 
 import com.back.cafe.domain.product.controller.ProductController;
+import com.back.cafe.domain.product.entity.Product;
 import com.back.cafe.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,5 +74,28 @@ class ApiProductCRUDContollerTest {
                 .andExpect(jsonPath("$.data.imageUrl").value("https://picsum.photos/300"));
 
         assertThat(productRepository.count()).isEqualTo(beforeCount + 1);
+    }
+
+    @Test
+    @DisplayName("관리자 상품 제거")
+    void t2() throws Exception{
+        long beforeCount = productRepository.count();
+        long targetId = 1L;
+        ResultActions resultActions= mvc.perform(
+                delete("/api/v1/products/%d".formatted(targetId))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("deleteProduct"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 상품이 삭제되었습니다".formatted(targetId)));
+
+        Product product = productRepository.findById(targetId).orElse(null);
+        assertThat(product).isNull();
+
+        assertThat(productRepository.count()+1).isEqualTo(beforeCount);
     }
 }
