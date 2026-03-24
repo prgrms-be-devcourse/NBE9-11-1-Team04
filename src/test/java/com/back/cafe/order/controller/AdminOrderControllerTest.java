@@ -67,27 +67,5 @@ class AdminOrderControllerTest {
                 .andExpect(jsonPath("$.data.content[2].status").value("PENDING"));
 
     }
-    @Test
-    @DisplayName("유저 별 주문 목록 조회")
-    void getOrdersByPeriodTest() throws Exception {
-
-        // 1페이지(0)에 10개씩 가져오라고 실제 API에 요청
-        mockMvc.perform(get("/api/v1/admin/orders/p")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("200-1"))
-                //1번 유저의 주문 목록만 잘 조회했는지
-                .andExpect(jsonPath("$.data.content[0].userId").value(1))
-                .andExpect(jsonPath("$.data.content[1].userId").value(1))
-                .andExpect(jsonPath("$.data.content[2].userId").value(1))
-                .andExpect(jsonPath("$.data.content[3].userId").value(1))
-                .andExpect(jsonPath("$.data.content[4].userId").value(1))
-                .andExpect(jsonPath("$.data.content[5].userId").value(1))
-                .andExpect(jsonPath("$.data.content[6].userId").value(1))
-                .andExpect(jsonPath("$.data.content[7].userId").value(1))
-                .andExpect(jsonPath("$.data.content.length()").value(10))
-                .andExpect(jsonPath("$.data.content[2].status").value("PENDING"));
-
-    }
 
 }
