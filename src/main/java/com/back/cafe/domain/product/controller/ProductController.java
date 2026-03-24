@@ -99,12 +99,10 @@ public class ProductController {
     ) {
     }
 
-
-
     @PutMapping("/{id}")
     public RsData<ProductDto> modify(
             @PathVariable Long id,
-            @RequestBody @Valid ProductModifyReqBody reqBody
+            @RequestBody ProductModifyReqBody reqBody
     ) {
         ProductDto productDto = productService.modify(
                 id,
