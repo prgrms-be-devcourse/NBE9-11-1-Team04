@@ -21,16 +21,16 @@ public class OrderController {
 
     record OrderWriteReqBody(
             @NotEmpty
-            List<OrderProductDto> orderProductRequests
+            List<OrderProductDto> orderProductRequests,
+            Long userId
     ){}
 
     // 주문 생성
-    @PostMapping("/user/{userId}")
+    @PostMapping
     public RsData<OrderDto> createUpdateOrder(
-            @PathVariable Long userId,
             @RequestBody @Valid OrderWriteReqBody reqBody
     ){
-        Order order = orderService.doOrder(userId, reqBody.orderProductRequests);
+        Order order = orderService.doOrder(reqBody.userId, reqBody.orderProductRequests);
         boolean created = order.getCreatedAt() == order.getModifiedAt();
         String msg = created?"번 주문이 생성되었습니다.":"번 추가주문이 완료되었습니다.";
         String resultCode = created?"201-1":"200-1";
