@@ -5,6 +5,10 @@ import com.back.cafe.domain.order.dto.OrderStatusUpdateRequest;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.service.AdminOrderService;
 import com.back.cafe.global.rsData.RsData;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -57,6 +61,25 @@ public class AdminOrderController {
                 "주문 상태가 변경되었습니다.",
                 "200-1",
                 new OrderDto(order)
+        );
+    }
+
+    /**
+     * 전체 주문 목록 조회
+     * GET /api/v1/orders?page=0&size=10
+     * @param pageable 페이지 정보
+     * @return 전체 주문 목록
+     */
+    @GetMapping
+    public RsData<Page<OrderDto>> getOrders(
+            @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ){
+        Page<OrderDto> orders = adminOrderService.findAll(pageable);
+        return new RsData<>(
+                "모든 주문을 성공적으로 조회하였습니다.",
+                "200-1",
+                orders
         );
     }
 }

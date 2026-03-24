@@ -1,9 +1,12 @@
 package com.back.cafe.domain.order.service;
 
+import com.back.cafe.domain.order.dto.OrderDto;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.entity.OrderStatus;
 import com.back.cafe.domain.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,4 +54,15 @@ public class AdminOrderService {
 
         return order;
     }
+
+    /**
+     * 전체 주문 목록 조회 + 페이징 로직
+     * @param pageable 페이지 정보
+     * @return 전체 주문 정보 Dto List
+     */
+    public Page<OrderDto> findAll(Pageable pageable) {
+        return orderRepository.findAll(pageable) // Page인터페이스 자체적으로 map() 메서드를 지원
+                .map(OrderDto::new);
+    }
+
 }
