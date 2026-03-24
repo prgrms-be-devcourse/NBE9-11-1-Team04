@@ -18,6 +18,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll() // H2 콘솔 허용
+                        .requestMatchers(
+                                "/v3/api-docs/**",         // OpenAPI 명세서 (JSON/YAML)
+                                "/swagger-ui/**",          // Swagger UI HTML 페이지
+                                "/swagger-ui.html",        // 구버전 및 리다이렉트 경로
+                                "/swagger-resources/**",   // Swagger 리소스
+                                "/webjars/**"              // 정적 리소스(CSS, JS)
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
