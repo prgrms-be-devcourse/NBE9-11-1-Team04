@@ -19,7 +19,7 @@ public class OrderInitData {
 
     @Autowired
     @Lazy
-    private ProductInitData self; //  프록시 객체 주입
+    private OrderInitData self; //  프록시 객체 주입
 
     private final OrderRepository orderRepository;
 
