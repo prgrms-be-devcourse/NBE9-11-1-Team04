@@ -135,7 +135,7 @@ public class OrderControllerTest {
 
         orderRepository.flush();
         Order order = orderService.findOrder(userId).get();
-        order.setCreated_at(yesterday1PM);
+        order.setCreatedAt(yesterday1PM);
         orderRepository.save(order);
 
         // 신규 주문

@@ -19,7 +19,7 @@ public record OrderDto(
                 order.getId(),
                 order.getUserId(),
                 order.getTotalPrice(),
-                order.getModified_at(),
+                order.getModifiedAt(),
                 order.getStatus(),
                 order.getOrderProducts()
         );
