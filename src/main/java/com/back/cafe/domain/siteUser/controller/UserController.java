@@ -75,7 +75,7 @@ public class UserController {
             @PathVariable Long id
     ) {
         UserDto user = userService.findById(id);
-        userService.delete(user);
+        userService.deleteById(user.id());
 
         return new RsData<UserDto>(
                 "유저 삭제 완료",
