@@ -38,19 +38,15 @@ public class OrderInitData {
         if (orderRepository.count() > 0) return;
 
         List<Order> orders = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-
-            Order o1 = new Order(1L);
-            Order o2 = new Order(2L);
-            Order o3 = new Order(3L);
-            orders.add(o1);
-            orders.add(o2);
-            orders.add(o3);
-
-            orderRepository.saveAll(orders);
-
-            // 여기에 추가 로직(예: 리뷰 생성 등)이 들어와도 하나의 트랜잭션으로 묶임
-            System.out.println("OrderInitData: 인 초기 데이터 생성 완료");
+        for(int i = 0 ; i < 10 ; i++){
+            orders.add(new Order(1L));
+            orders.add(new Order(2L));
+            orders.add(new Order(3L));
         }
+
+        orderRepository.saveAll(orders);
+
+        // 여기에 추가 로직(예: 리뷰 생성 등)이 들어와도 하나의 트랜잭션으로 묶임
+        System.out.println("OrderInitData: 인 초기 데이터 생성 완료");
     }
 }

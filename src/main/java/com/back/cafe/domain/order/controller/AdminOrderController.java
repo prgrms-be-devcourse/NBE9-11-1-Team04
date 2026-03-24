@@ -111,4 +111,18 @@ public class AdminOrderController {
                 orders
         );
     }
+
+    @GetMapping("/user/{userId}")
+    public RsData<Page<OrderDto>> getOrdersByUserId(
+            @PathVariable("userId") long userId,
+            @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ){
+        Page<OrderDto> orders = adminOrderService.findByUserId(userId,pageable);
+        return new RsData<>(
+                "유저 별 주문 목록을 성공적으로 조회하였습니다.",
+                "200-1",
+                orders
+        );
+    }
+
 }
