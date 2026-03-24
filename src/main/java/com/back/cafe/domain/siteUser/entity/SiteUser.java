@@ -4,10 +4,12 @@ package com.back.cafe.domain.siteUser.entity;
 import com.back.cafe.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Builder
 @NoArgsConstructor
 @Getter
 public class SiteUser extends BaseEntity {
