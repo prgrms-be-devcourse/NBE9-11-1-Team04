@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,5 +42,15 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("삭제하고자 하는 상품이 없습니다."));
 
         productRepository.delete(product);
+    }
+
+    @Transactional
+    public ProductDto modify(Long id,String name, String category, Long price, int stock, String description, String imageUrl){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("수정하고자 하는 상품이 존재하지 않습니다."));
+        product.update(name,category,price,stock,description,imageUrl);
+        return ProductDto.from(product);
+
+
     }
 }

@@ -34,4 +34,13 @@ public class Product extends BaseEntity {
         this.description = description;
         this.imageUrl = imageUrl;
     }
+
+    public void update(String name, String category,Long price, int stock, String description, String imageUrl){
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
 }

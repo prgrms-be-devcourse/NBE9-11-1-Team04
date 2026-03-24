@@ -1,4 +1,5 @@
 package com.back.cafe.domain.product.controller;
+
 import com.back.cafe.domain.product.dto.ProductDto;
 import com.back.cafe.domain.product.entity.Product;
 import com.back.cafe.domain.product.service.ProductService;
@@ -7,6 +8,7 @@ import com.oracle.svm.core.annotate.Delete;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,14 +35,14 @@ public class ProductController {
     @GetMapping
     @Transactional(readOnly = true)
     @Operation(summary = "다건 조회")
-    public List<ProductDto> getProducts(){
+    public List<ProductDto> getProducts() {
         return productService.findAll();
     }
 
-   @GetMapping("/{id}")
+    @GetMapping("/{id}")
     @Transactional(readOnly = true)
     @Operation(summary = "단건 조회")
-    public ProductDto getProduct(@PathVariable Long id){
+    public ProductDto getProduct(@PathVariable Long id) {
         return productService.findById(id);
     }
 
@@ -50,7 +53,8 @@ public class ProductController {
             @NotNull Integer stock,
             @NotBlank String description,
             @NotBlank String imageUrl
-    ) {}
+    ) {
+    }
 
     @PostMapping
     @Operation(summary = "상품 생성")
@@ -74,16 +78,60 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary="관리자 상품 제거")
-    public RsData<Void> deleteProduct(@PathVariable long id){
+    @Operation(summary = "관리자 상품 제거")
+    public RsData<Void> deleteProduct(@PathVariable long id) {
 
         productService.delete(id);
 
-            return new RsData<>(
-                    "%d번 상품이 삭제 되었습니다".formatted(id),
-                    "200-1"
-            );
+        return new RsData<>(
+                "%d번 상품이 삭제 되었습니다".formatted(id),
+                "200-1"
+        );
+    }
 
+    record ProductModifyReqBody(
+            @NotBlank(message = "상품명은 필수입니다.")
+            String name,
+
+            @NotBlank(message = "카테고리는 필수입니다.")
+            String category,
+
+            @NotNull(message = "가격은 필수입니다.")
+            @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
+            Long price,
+
+            @Min(value = 0, message = "재고는 0 이상이어야 합니다.")
+            int stock,
+
+            @NotBlank(message = "설명은 필수입니다.")
+            String description,
+
+            String imageUrl
+    ) {
+    }
+
+
+
+    @PutMapping("/{id}")
+    public RsData<ProductDto> modify(
+            @PathVariable Long id,
+            @RequestBody @Valid ProductModifyReqBody reqBody
+    ) {
+        ProductDto productDto = productService.modify(
+                id,
+                reqBody.name(),
+                reqBody.category(),
+                reqBody.price(),
+                reqBody.stock(),
+                reqBody.description(),
+                reqBody.imageUrl()
+        );
+
+        return new RsData<>(
+                "%d번 상품이 수정되었습니다.".formatted(productDto.id()),
+                "200-1",
+                productDto
+        );
 
     }
 }
