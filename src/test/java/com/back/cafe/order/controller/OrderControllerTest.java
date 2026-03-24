@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -170,5 +171,41 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderProducts[?(@.productId==3)].quantity").value(2))
                 .andExpect(jsonPath("$.data.status").value("PENDING"));
     }
+    @Test
+    @DisplayName("내 주문 조회 테스트")
+    void t4() throws Exception{
+        long userId = 6;
+        long targetId = 5;
+
+        // 테스트를 위한 기존 주문
+        mvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                                {
+                                  "orderProductRequests": [
+                                    { "productId": 1, "quantity": 2 },
+                                    { "productId": 2, "quantity": 3 }
+                                  ],
+                                  "userId":%d
+                                }
+                                """.formatted(userId))
+                );
+
+        // userId에 맞는 주문 조회
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/orders/user/%d".formatted(userId))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print());
+        resultActions
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getOrderByUser"))
+                .andExpect(jsonPath("$.orderDtos[0].id").value(targetId))
+                .andExpect(jsonPath("$.orderDtos[0].orderProducts[?(@.productId==1)].quantity").value(2))
+                .andExpect(jsonPath("$.orderDtos[0].orderProducts[?(@.productId==2)].quantity").value(3))
+                .andExpect(jsonPath("$.orderDtos[0].status").value("PENDING"));
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.back.cafe.domain.order.service;
 
+import com.back.cafe.domain.order.dto.OrderDto;
 import com.back.cafe.domain.order.dto.OrderProductDto;
 import com.back.cafe.domain.order.dto.OrderServiceResponse;
 import com.back.cafe.domain.order.entity.Order;
@@ -80,6 +81,11 @@ public class OrderService {
                     return created_at.isAfter(start) && created_at.isBefore(end);
                 })
                 .findFirst();
+    }
+
+    public List<OrderDto> findByUserId(Long userId){  // 같은 사용자 주문 중 시간대가 맞는 것을 반환해준다
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream().map(OrderDto::new).toList();
     }
 
 }
