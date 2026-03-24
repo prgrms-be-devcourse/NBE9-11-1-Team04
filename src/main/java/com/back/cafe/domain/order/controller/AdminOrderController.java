@@ -112,6 +112,13 @@ public class AdminOrderController {
         );
     }
 
+    /**
+     * 유저 별 주문 목록 조회
+     * GET /api/v1/orders/user/{userId}
+     * @param userId 유저 아이디
+     * @param pageable 페이지 정보
+     * @return 유저 별 주문 목록
+     */
     @GetMapping("/user/{userId}")
     public RsData<Page<OrderDto>> getOrdersByUserId(
             @PathVariable("userId") long userId,
