@@ -46,7 +46,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto modify(Long id,String name, String category, Long price, int stock, String description, String imageUrl){
+    public ProductDto modify(Long id,String name, String category, Long price, Integer stock, String description, String imageUrl){
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("수정하고자 하는 상품이 존재하지 않습니다."));
         product.update(name,category,price,stock,description,imageUrl);
