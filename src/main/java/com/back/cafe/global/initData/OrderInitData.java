@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -36,13 +37,20 @@ public class OrderInitData {
     public void work1() {
         if (orderRepository.count() > 0) return;
 
-        Order p1 = new Order(1L);
-        Order p2 = new Order(2L);
-        Order p3 = new Order(3L);
+        List<Order> orders = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
 
-        orderRepository.saveAll(List.of(p1, p2, p3));
+            Order o1 = new Order(1L);
+            Order o2 = new Order(2L);
+            Order o3 = new Order(3L);
+            orders.add(o1);
+            orders.add(o2);
+            orders.add(o3);
 
-        // 여기에 추가 로직(예: 리뷰 생성 등)이 들어와도 하나의 트랜잭션으로 묶임
-        System.out.println("OrderInitData: 인 초기 데이터 생성 완료");
+            orderRepository.saveAll(orders);
+
+            // 여기에 추가 로직(예: 리뷰 생성 등)이 들어와도 하나의 트랜잭션으로 묶임
+            System.out.println("OrderInitData: 인 초기 데이터 생성 완료");
+        }
     }
 }
