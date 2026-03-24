@@ -211,4 +211,78 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderDtos[0].orderProducts[?(@.productId==2)].quantity").value(3))
                 .andExpect(jsonPath("$.orderDtos[0].status").value("PENDING"));
     }
+
+
+    @Test
+    @DisplayName("주문 생성 시 상품 재고 감소 검증")
+    void t5() throws Exception {
+        // 테스트용 상품 생성 (재고 10개)
+        Product p1 = productRepository.save(new Product("아메리카노", "커피", 4000L, 10, "설명", "url"));
+        Product p2 = productRepository.save(new Product("라떼", "커피", 4500L, 10, "설명", "url"));
+
+        long userId = 100;
+
+        // 주문 수행 (아메리카노 2개, 라떼 3개 주문)
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": %d, "quantity": 2 },
+                                            { "productId": %d, "quantity": 3 }
+                                          ],
+                                          "userId": %d
+                                        }
+                                        """.formatted(p1.getId(), p2.getId(), userId))
+                );
+
+        // 성공 응답(201-1) 확인
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("201-1"));
+
+        // DB 재고가 정확히 깎였는지 확인
+        Product P1 = productRepository.findById(p1.getId()).get();
+        Product P2 = productRepository.findById(p2.getId()).get();
+
+        assertThat(P1.getStock()).isEqualTo(8);  // 10 - 2
+        assertThat(P2.getStock()).isEqualTo(7);  // 10 - 3
+    }
+
+    @Test
+    @DisplayName("재고 부족 시 주문 실패 검증 (400 응답)")
+    void t6() throws Exception {
+        // 재고가 1개인 상품 생성
+        Product p = productRepository.save(new Product("희귀템", "ETC", 10000L, 1, "설명", "url"));
+        long userId = 101;
+
+        // 2개 주문 시도 (재고 부족 발생 -> 핸들러가 400 반환)
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": %d, "quantity": 2 }
+                                          ],
+                                          "userId": %d
+                                        }
+                                        """.formatted(p.getId(), userId))
+                )
+                .andDo(print());
+
+        // 핸들러가 메시지에 "재고"가 있어 400(BadRequest)을 뱉는지 확인
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.resultCode").value("400-1"))
+                .andExpect(jsonPath("$.msg").value("재고 부족"));
+
+        // 롤백 검증: 재고가 깎이지 않고 1인지 확인
+        Product P1 = productRepository.findById(p.getId()).get();
+        assertThat(P1.getStock()).isEqualTo(1);
+
+    }
 }
