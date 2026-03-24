@@ -50,7 +50,6 @@ public class ProductController {
     ) {}
 
     @PostMapping
-    @Transactional
     @Operation(summary = "상품 생성")
     public RsData<ProductDto> createProduct(
             @RequestBody @Valid ProductCreateReq req

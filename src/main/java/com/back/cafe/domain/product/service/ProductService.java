@@ -5,6 +5,7 @@ import com.back.cafe.domain.product.entity.Product;
 import com.back.cafe.domain.product.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다. ID: " + id));
     }
 
+    @Transactional
     public ProductDto create(String name, String category, Long price, int stock, String description, String imageUrl){
         Product product = new Product(name,category,price,stock,description,imageUrl);
         return ProductDto.from(productRepository.save(product));
