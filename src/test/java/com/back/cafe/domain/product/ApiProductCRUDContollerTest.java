@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -97,5 +98,46 @@ class ApiProductCRUDContollerTest {
         assertThat(product).isNull();
 
         assertThat(productRepository.count()+1).isEqualTo(beforeCount);
+    }
+    @Test
+    @DisplayName("관리자 상품 수정")
+    void t3() throws Exception {
+        // given
+        Product product = productRepository.findById(1L).orElseThrow();
+
+        String modifyRequestBody = """
+                {
+                  "name": "수정된 아메리카노",
+                  "category": "COFFEE",
+                  "price": 4500,
+                  "stock": 100,
+                  "description": "매우 진한 아메리카노",
+                  "imageUrl": "modified-image.jpg"
+                }
+                """;
+
+        ResultActions resultActions = mvc.perform(
+                put("/api/v1/products/%d".formatted(product.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(modifyRequestBody)
+        ).andDo(print());
+
+        // then
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("modify"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 상품이 수정되었습니다.".formatted(product.getId())))
+                .andExpect(jsonPath("$.data.id").value(product.getId()))
+                .andExpect(jsonPath("$.data.name").value("수정된 아메리카노"))
+                .andExpect(jsonPath("$.data.category").value("COFFEE"))
+                .andExpect(jsonPath("$.data.price").value(4500))
+                .andExpect(jsonPath("$.data.stock").value(100))
+                .andExpect(jsonPath("$.data.description").value("매우 진한 아메리카노"))
+                .andExpect(jsonPath("$.data.imageUrl").value("modified-image.jpg"));
+
+
+
     }
 }
