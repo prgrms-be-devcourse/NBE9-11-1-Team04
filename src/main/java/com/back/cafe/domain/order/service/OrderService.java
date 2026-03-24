@@ -1,6 +1,7 @@
 package com.back.cafe.domain.order.service;
 
 import com.back.cafe.domain.order.dto.OrderProductDto;
+import com.back.cafe.domain.order.dto.OrderServiceResponse;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.entity.OrderProduct;
 import com.back.cafe.domain.order.repository.OrderRepository;
@@ -17,15 +18,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-
-
     @Transactional
-    public Order doOrder(Long userId, List<OrderProductDto> orderProductRequests){
+    public OrderServiceResponse doOrder(Long userId, List<OrderProductDto> orderProductRequests){
         Optional<Order> existOrder = findOrder(userId);
+        Order order;
+        boolean created;
         if(existOrder.isPresent()){
-            return modifyOrder(userId, orderProductRequests);
+            order = modifyOrder(userId, orderProductRequests);
+            created = false;
+        }else{
+            order = createOrder(userId, orderProductRequests);
+            created = true;
         }
-        return createOrder(userId, orderProductRequests);
+        return new OrderServiceResponse(order,created);
     }
 
     @Transactional
