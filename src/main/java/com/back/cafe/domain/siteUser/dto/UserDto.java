@@ -16,14 +16,6 @@ public record UserDto(
                 siteUser.getZipCode()
         );
     }
-
-    public SiteUser toEntity() {
-        return SiteUser.builder()
-                .email(this.email)
-                .address(this.address)
-                .zipCode(this.zipCode)
-                .build();
-    }
 }
 
 
