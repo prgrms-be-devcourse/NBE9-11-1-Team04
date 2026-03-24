@@ -4,6 +4,8 @@ import com.back.cafe.domain.order.controller.OrderController;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.repository.OrderRepository;
 import com.back.cafe.domain.order.service.OrderService;
+import com.back.cafe.domain.product.entity.Product;
+import com.back.cafe.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -34,6 +36,9 @@ public class OrderControllerTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("주문 신규 생성 테스트")
@@ -206,6 +211,4 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderDtos[0].orderProducts[?(@.productId==2)].quantity").value(3))
                 .andExpect(jsonPath("$.orderDtos[0].status").value("PENDING"));
     }
-
-
 }

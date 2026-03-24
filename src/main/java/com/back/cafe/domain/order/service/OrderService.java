@@ -6,6 +6,7 @@ import com.back.cafe.domain.order.dto.OrderServiceResponse;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.entity.OrderProduct;
 import com.back.cafe.domain.order.repository.OrderRepository;
+import com.back.cafe.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final ProductService productService;
+
     @Transactional
     public OrderServiceResponse doOrder(Long userId, List<OrderProductDto> orderProductRequests){
+
+        productService.reduceStock(orderProductRequests);
+
         Optional<Order> existOrder = findOrder(userId);
         Order order;
         boolean created;

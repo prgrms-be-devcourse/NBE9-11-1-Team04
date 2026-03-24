@@ -1,5 +1,7 @@
 package com.back.cafe.domain.product.service;
 
+import com.back.cafe.domain.order.dto.OrderProductDto;
+import com.back.cafe.domain.order.entity.OrderProduct;
 import com.back.cafe.domain.product.dto.ProductDto;
 import com.back.cafe.domain.product.dto.ServiceModifyProductDto;
 import com.back.cafe.domain.product.entity.Product;
@@ -59,6 +61,26 @@ public class ProductService {
                 serviceModifyProductDto.imageUrl());
         return ProductDto.from(product);
 
+    }
 
+    public void restoreStock(List<OrderProduct> orderProducts) {
+        orderProducts.forEach(orderProduct -> {
+            Product product = productRepository.findById(orderProduct.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. ID: " + orderProduct.getProductId()));
+
+            // 엔티티에 미리 만들어둔 increaseStock 호출
+            product.increaseStock(orderProduct.getQuantity());
+        });
+    }
+
+    @Transactional
+    public void reduceStock(List<OrderProductDto> orderProductRequests) {
+        orderProductRequests.forEach(req -> {
+            Product product = productRepository.findById(req.productId())
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. ID: " + req.productId()));
+
+            // 엔티티의 decreaseStock 호출 (여기서 재고 부족 예외가 터짐)
+            product.decreaseStock(req.quantity());
+        });
     }
 }

@@ -43,4 +43,21 @@ public class Product extends BaseEntity {
         if (description != null) this.description = description;
         if (imageUrl != null) this.imageUrl = imageUrl;
     }
+
+    public void decreaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("재고 감소량은 1 이상이어야 합니다.");
+        }
+        if (this.stock < quantity) {
+            throw new IllegalArgumentException("재고 부족");
+        }
+        this.stock -= quantity;
+    }
+
+    public void increaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("재고 증가량은 1 이상이어야 합니다.");
+        }
+        this.stock += quantity;
+    }
 }
