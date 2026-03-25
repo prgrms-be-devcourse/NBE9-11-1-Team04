@@ -18,6 +18,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -285,4 +288,48 @@ public class OrderControllerTest {
         assertThat(P1.getStock()).isEqualTo(1);
 
     }
+
+    @Test
+    @DisplayName("동시 주문 발생 시 재고 정합성 검증")
+    void t7_concurrency() throws Exception {
+        // 1. 준비: 재고가 100개인 상품 생성
+        Product p = productRepository.save(new Product("동시성테스트상품", "커피", 4000L, 100, "설명", "url"));
+        long productId = p.getId();
+        long userId = 102;
+
+        int threadCount = 100; // 동시에 보낼 요청 수
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount); // 모든 스레드가 끝날 때까지 대기하기 위한 장치
+
+        // 100명이 동시에 API 호출
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    mvc.perform(
+                            post("/api/v1/orders")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": %d, "quantity": 1 }
+                                          ],
+                                          "userId": %d
+                                        }
+                                        """.formatted(productId, userId))
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown(); // 작업 완료 신호
+                }
+            });
+        }
+
+        latch.await(); // 모든 요청이 끝날 때까지 대기
+
+        // 최종 재고 확인
+        Product updatedProduct = productRepository.findById(productId).get();
+        assertThat(updatedProduct.getStock()).isEqualTo(0);
+    }
+
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -63,9 +64,14 @@ public class ProductService {
 
     }
 
+    @Transactional
     public void restoreStock(List<OrderProduct> orderProducts) {
-        orderProducts.forEach(orderProduct -> {
-            Product product = productRepository.findById(orderProduct.getProductId())
+        List<OrderProduct> sortedProducts = orderProducts.stream()
+                .sorted(Comparator.comparing(OrderProduct::getProductId))
+                .toList();
+
+        sortedProducts.forEach(orderProduct -> {
+            Product product = productRepository.findByIdWithLock(orderProduct.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. ID: " + orderProduct.getProductId()));
 
             // 엔티티에 미리 만들어둔 increaseStock 호출
@@ -75,8 +81,12 @@ public class ProductService {
 
     @Transactional
     public void reduceStock(List<OrderProductDto> orderProductRequests) {
-        orderProductRequests.forEach(req -> {
-            Product product = productRepository.findById(req.productId())
+        List<OrderProductDto> sortedRequests = orderProductRequests.stream()
+                .sorted(Comparator.comparing(OrderProductDto::productId))
+                .toList();
+
+        sortedRequests.forEach(req -> {
+            Product product = productRepository.findByIdWithLock(req.productId())
                     .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. ID: " + req.productId()));
 
             // 엔티티의 decreaseStock 호출 (여기서 재고 부족 예외가 터짐)
