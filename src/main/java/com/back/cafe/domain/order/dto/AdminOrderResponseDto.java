@@ -6,6 +6,7 @@ import java.util.List;
 public record AdminOrderResponseDto(
         Long id,
         Long userId,
+        String email,
         String address,
         int totalPrice,
         LocalDateTime orderedAt,

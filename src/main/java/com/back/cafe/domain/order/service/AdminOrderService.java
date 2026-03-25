@@ -74,9 +74,11 @@ public class AdminOrderService {
     }
 
     private AdminOrderResponseDto toDto(Order order) {
-        String address = userRepository.findById(order.getUserId())
-                .map(SiteUser::getAddress)
+        SiteUser siteUser = userRepository.findById(order.getUserId())
                 .orElse(null);
+
+        String email = siteUser != null ? siteUser.getEmail() : null;
+        String address = siteUser != null ? siteUser.getAddress() : null;
 
         List<Long> productIds = order.getOrderProducts().stream()
                 .map(OrderProduct::getProductId)
@@ -97,6 +99,7 @@ public class AdminOrderService {
         return new AdminOrderResponseDto(
                 order.getId(),
                 order.getUserId(),
+                email,
                 address,
                 order.getTotalPrice(),
                 order.getCreatedAt(),

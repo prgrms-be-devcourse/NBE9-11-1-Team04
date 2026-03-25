@@ -78,8 +78,8 @@ class AdminOrderControllerTest {
     }
 
     @Test
-    @DisplayName("관리자 주문 조회 응답에 address와 productName 포함")
-    void adminOrderResponseContainsAddressAndProductName() throws Exception {
+    @DisplayName("관리자 주문 조회 응답에 email, address, productName 포함")
+    void adminOrderResponseContainsEmailAddressAndProductName() throws Exception {
         userRepository.save(new SiteUser("seed1@example.com", "서울시 중구 1", "10001"));
         userRepository.save(new SiteUser("seed2@example.com", "서울시 중구 2", "10002"));
         userRepository.save(new SiteUser("seed3@example.com", "서울시 중구 3", "10003"));
@@ -108,6 +108,7 @@ class AdminOrderControllerTest {
         mvc.perform(get("/api/v1/admin/orders/user/%d".formatted(user.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content[0].userId").value(user.getId()))
+                .andExpect(jsonPath("$.data.content[0].email").value("admin-test@example.com"))
                 .andExpect(jsonPath("$.data.content[0].address").value("서울시 마포구 테스트로 101"))
                 .andExpect(jsonPath("$.data.content[0].orderProducts[0].productId").value(product.getId()))
                 .andExpect(jsonPath("$.data.content[0].orderProducts[0].productName").value("테스트 원두"))
