@@ -34,9 +34,9 @@ public class ProductInitData {
     public void work1() {
         if (productRepository.count() > 0) return;
 
-        Product p1 = new Product("아메리카노", "COFFEE", 4500L, 100, "시원한 커피", "https://picsum.photos/200");
-        Product p2 = new Product("카페라떼", "COFFEE", 5000L, 50, "고소한 라떼", "https://picsum.photos/200");
-        Product p3 = new Product("치즈케이크", "DESSERT", 6500L, 20, "부드러운 케이크", "https://picsum.photos/200");
+        Product p1 = new Product("콜롬비아 수프리모", "NUTTY", 4500L, 100, "견과류처럼 고소하고 부드러운 풍미", "https://picsum.photos/200");
+        Product p2 = new Product("에티오피아 예가체프", "FRUITY", 5000L, 50, "화사한 산미와 과일 향이 특징", "https://picsum.photos/200");
+        Product p3 = new Product("디카페인 콜롬비아", "DECAF", 6500L, 20, "카페인을 제거해 부담 없이 즐기는 원두", "https://picsum.photos/200");
 
         productRepository.saveAll(List.of(p1, p2, p3));
 

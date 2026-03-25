@@ -32,7 +32,7 @@ public class UserService {
             existingUser.update(dto.address(), dto.zipCode());
             return existingUser;
         }).orElseGet(() -> {
-            // 3. 없으면 새로운 유저 생성
+            // 없으면 새로운 유저 생성
             return userRepository.save(dto.toEntity());
         });
 
