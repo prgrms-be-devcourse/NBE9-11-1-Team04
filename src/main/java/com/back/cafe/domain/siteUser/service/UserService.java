@@ -2,14 +2,18 @@ package com.back.cafe.domain.siteUser.service;
 
 
 import com.back.cafe.domain.product.dto.ProductDto;
+import com.back.cafe.domain.siteUser.controller.UserController;
 import com.back.cafe.domain.siteUser.dto.UserDto;
 import com.back.cafe.domain.siteUser.entity.SiteUser;
 import com.back.cafe.domain.siteUser.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,9 +21,22 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserDto createUser(SiteUser siteUser) {
-        userRepository.save(siteUser);
-        return UserDto.from(siteUser);
+    @Transactional
+    public UserController.UserServiceResponse upsert(UserController.UserCreateReq dto) {
+        Optional<SiteUser> User = userRepository.findByEmail(dto.email());
+
+        boolean isCreated = User.isEmpty();
+
+        SiteUser siteUser = User.map(existingUser -> {
+            // 기존 유저가 있으면 업데이트
+            existingUser.update(dto.address(), dto.zipCode());
+            return existingUser;
+        }).orElseGet(() -> {
+            // 3. 없으면 새로운 유저 생성
+            return userRepository.save(dto.toEntity());
+        });
+
+        return new UserController.UserServiceResponse(UserDto.from(siteUser), isCreated);
     }
 
     public List<UserDto> findAll() {

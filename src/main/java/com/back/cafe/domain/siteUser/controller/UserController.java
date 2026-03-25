@@ -57,17 +57,25 @@ public class UserController {
     ) {
     }
 
+    public record UserServiceResponse(
+            UserDto user,
+            boolean isCreated  // true: 새로 생성됨, false: 기존 정보 수정됨
+    ) {}
+
     @PostMapping
     @Transactional
-    @Operation(summary = "사용자 생성", description = "신규 사용자를 목록에 추가합니다.")
-    public RsData<UserCreateRes> create(
-            @RequestBody @Valid UserCreateReq reqBody
-    ) {
-        UserDto userDto = userService.createUser(reqBody.toEntity());
+    @Operation(summary = "사용자 등록/수정", description = "이메일 존재 여부에 따라 생성 또는 수정을 진행합니다.")
+    public RsData<UserCreateRes> create(@RequestBody @Valid UserCreateReq reqBody) {
+
+        UserServiceResponse serviceRes = userService.upsert(reqBody);
+
+        String msg = serviceRes.isCreated() ? "유저 생성 완료" : "유저 수정 완료";
+        String resultCode = serviceRes.isCreated() ? "201-1" : "200-1";
+
         return new RsData<>(
-                "유저 등록 완료",
-                "201-1",
-                new UserCreateRes(userDto)
+                msg,
+                resultCode,
+                new UserCreateRes(serviceRes.user())
         );
     }
 
