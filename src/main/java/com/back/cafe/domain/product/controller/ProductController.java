@@ -26,20 +26,20 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
-@Tag(name = "ApiV1ProductController", description = "상품 API")
+@Tag(name = "상품 API", description = "상품 관리를 위한 API")
 public class ProductController {
     private final ProductService productService;
 
     @GetMapping
     @Transactional(readOnly = true)
-    @Operation(summary = "다건 조회")
+    @Operation(summary = "상품 목록 조회",description = "전체 상품목록을 조회합니다")
     public List<ProductDto> getProducts() {
         return productService.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    @Operation(summary = "단건 조회")
+    @Operation(summary = "상품 단건 조회",description = "상품ID로 상품을 단건 조회합니다")
     public ProductDto getProduct(@PathVariable Long id) {
         return productService.findById(id);
     }
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @PostMapping
-    @Operation(summary = "상품 생성")
+    @Operation(summary = "신규 상품 생성", description = "관리자가 상품을 신규 추가 합니다.")
     public RsData<ProductDto> createProduct(
             @RequestBody @Valid ProductCreateReq req
     ) {
@@ -76,7 +76,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "관리자 상품 제거")
+    @Operation(summary = "관리자 상품 제거",description = "관리자가 기존의 상품을 ID를 받아 삭제합니다.")
     public RsData<Void> deleteProduct(@PathVariable long id) {
 
         productService.delete(id);
@@ -89,6 +89,7 @@ public class ProductController {
 
 
     @PutMapping("/{id}")
+    @Operation(summary = "관리자 상품 수정", description = "관리자가 기존의 상품ID와 수정할 정보를 받아 수정합니다")
     public RsData<ProductDto> modify(
             @PathVariable Long id,
             @RequestBody @Valid ProductModifyRequest reqBody
