@@ -3,18 +3,17 @@ package com.back.cafe.domain.product.service;
 import com.back.cafe.domain.order.dto.OrderProductDto;
 import com.back.cafe.domain.order.entity.OrderProduct;
 import com.back.cafe.domain.product.dto.ProductDto;
-import com.back.cafe.domain.product.dto.ServiceModifyProductDto;
+import com.back.cafe.domain.product.dto.ServiceDto.ServiceCreateProductDto;
+import com.back.cafe.domain.product.dto.ServiceDto.ServiceModifyProductDto;
 import com.back.cafe.domain.product.entity.Product;
 import com.back.cafe.domain.product.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,8 +35,15 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto create(String name, String category, Long price, int stock, String description, String imageUrl){
-        Product product = new Product(name,category,price,stock,description,imageUrl);
+    public ProductDto create(ServiceCreateProductDto serviceCreateProductDto){
+        Product product = new Product(
+                serviceCreateProductDto.name(),
+                serviceCreateProductDto.category(),
+                serviceCreateProductDto.price(),
+                serviceCreateProductDto.stock(),
+                serviceCreateProductDto.description(),
+                serviceCreateProductDto.imageUrl()
+        );
         return ProductDto.from(productRepository.save(product));
     }
 

@@ -1,4 +1,4 @@
-package com.back.cafe.domain.product.dto;
+package com.back.cafe.domain.product.dto.ServiceDto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

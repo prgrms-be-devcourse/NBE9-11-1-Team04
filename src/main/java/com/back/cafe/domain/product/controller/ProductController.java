@@ -1,7 +1,8 @@
 package com.back.cafe.domain.product.controller;
 
 import com.back.cafe.domain.product.dto.ProductDto;
-import com.back.cafe.domain.product.dto.ProductModifyRequest;
+import com.back.cafe.domain.product.dto.ProductRequestDto.ProductCreateRequest;
+import com.back.cafe.domain.product.dto.ProductRequestDto.ProductModifyRequest;
 import com.back.cafe.domain.product.service.ProductService;
 import com.back.cafe.global.rsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,29 +45,13 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    record ProductCreateReq(
-            @NotBlank String name,
-            @NotBlank String category,
-            @NotNull Long price,
-            @NotNull Integer stock,
-            @NotBlank String description,
-            @NotBlank String imageUrl
-    ) {
-    }
 
     @PostMapping
     @Operation(summary = "신규 상품 생성", description = "관리자가 상품을 신규 추가 합니다.")
     public RsData<ProductDto> createProduct(
-            @RequestBody @Valid ProductCreateReq req
+            @RequestBody @Valid ProductCreateRequest req
     ) {
-        ProductDto productDto = productService.create(
-                req.name(),
-                req.category(),
-                req.price(),
-                req.stock(),
-                req.description(),
-                req.imageUrl()
-        );
+        ProductDto productDto = productService.create(req.toServiceDto());
 
         return new RsData<>(
                 "%d번 상품이 생성되었습니다".formatted(productDto.id()),
