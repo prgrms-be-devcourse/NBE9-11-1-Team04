@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SiteUser extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -27,5 +27,10 @@ public class SiteUser extends BaseEntity {
         this.email=email;
         this.address=address;
         this.zipCode=zipCode;
+    }
+
+    public void update(String address, String zipCode) {
+        this.address = address;
+        this.zipCode = zipCode;
     }
 }
