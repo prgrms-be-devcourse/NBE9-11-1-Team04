@@ -5,6 +5,7 @@ import com.back.cafe.domain.siteUser.entity.SiteUser;
 import com.back.cafe.domain.siteUser.service.UserService;
 import com.back.cafe.global.rsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Tag(name="사용자 API", description = "사용자 관리를 위한 API")
 @RequestMapping("/api/v1/users")
 public class UserController {
 
@@ -22,14 +24,14 @@ public class UserController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    @Operation(summary = "유저 다건 조회")
+    @Operation(summary = "사용자 다건 조회", description = "모든 사용자 목록을 조회 합니다")
     public List<UserDto> getUsers() {
         return userService.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    @Operation(summary = "유저 단건 조회")
+    @Operation(summary = "사용자 단건 조회", description = "사용자 ID를 통해 단일 유저를 조회합니다")
     public UserDto getUser(@PathVariable Long id) {
         return userService.findById(id);
     }
@@ -57,7 +59,7 @@ public class UserController {
 
     @PostMapping
     @Transactional
-    @Operation(summary = "유저 생성")
+    @Operation(summary = "사용자 생성", description = "신규 사용자를 목록에 추가합니다.")
     public RsData<UserCreateRes> create(
             @RequestBody @Valid UserCreateReq reqBody
     ) {
@@ -70,7 +72,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "유저 삭제")
+    @Operation(summary = "유저 삭제", description = "유저ID를 통해 목록에서 유저를 삭제합니다")
     public RsData<UserDto> deleteUser(
             @PathVariable Long id
     ) {
