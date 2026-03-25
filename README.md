@@ -3,8 +3,7 @@
   
 # ☕ Grids & Circle : Coffee Order 
   
-> 1인 가구 및 자취생을 위한 스마트한 식재료 관리 및 맞춤형 레시피 추천 풀스택 웹 애플리케이션입니다. 낭비되는 식재료를 줄이고, 보유한 재료로 만들 수 있는 요리를 간편하게 찾을 수 있도록 돕습니다.  
-  
+> 누워서 간편하게 커피를 주문하고 빠르게 커피를 즐겨 보세요!
 <br>  
   
 
@@ -20,6 +19,8 @@
 <br>
 
 ## :technologist: 팀원 소개 (Team Members)
+> **프로그래머스 백엔드 9기 11회차 1차 프로젝트 4팀 (라떼4조)**
+
 | 남진우<br/> (Jinwoo Nam) | 강승규<br/> (Seunggyu Kang) | 김동혁<br/> (DongHyeok Kim) | 김한솔<br/> (Hansol Kim) | 이유진 <br/>(Yujin Lee) |
 | :---: | :---: | :---: | :---: | :---: |
 | <img src="https://avatars.githubusercontent.com/u/123057930?s=64&v=4" alt="image" width="120" height="120" style="border-radius: 50%;" /> | <img src="https://avatars.githubusercontent.com/u/198696583?s=64&v=4&size=64" alt="image" width="120" height="120" style="border-radius: 50%;" /> |<img src="https://avatars.githubusercontent.com/u/258700527?s=64&v=4&size=64" alt="image" width="120" height="120" style="border-radius: 50%;" /> |<img src="https://avatars.githubusercontent.com/u/61941902?s=64&v=44&size=64" alt="image" width="120" height="120" style="border-radius: 50%;" /> |<img src="https://avatars.githubusercontent.com/u/89703649?s=64&v=4&size=64" alt="image" width="120" height="120" style="border-radius: 50%;" /> |
