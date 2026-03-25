@@ -1,28 +1,41 @@
 package com.back.cafe.order.controller;
 
+import com.back.cafe.domain.product.entity.Product;
+import com.back.cafe.domain.product.repository.ProductRepository;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @Transactional
 class AdminOrderControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MockMvc mvc;
 
 
 
@@ -66,6 +79,50 @@ class AdminOrderControllerTest {
                 .andExpect(jsonPath("$.data.content.length()").value(10))
                 .andExpect(jsonPath("$.data.content[2].status").value("PENDING"));
 
+    }
+
+    @Test
+    @DisplayName("관리자 주문 취소 시 재고 복구")
+    void adminOrderCancelRestoreStock() throws Exception {
+        // 재고가 10개인 상품 생성
+        Product p = productRepository.save(new Product("취소용상품", "커피", 4000L, 10, "설명", "url"));
+        long productId = p.getId();
+        long userId = 103;
+
+        // 1단계: 먼저 주문을 생성하여 재고를 깎음 (10 -> 7)
+        String orderResponse = mvc.perform(
+                post("/api/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "orderProductRequests": [
+                                { "productId": %d, "quantity": 3 }
+                              ],
+                              "userId": %d
+                            }
+                            """.formatted(productId, userId))
+        ).andReturn().getResponse().getContentAsString();
+
+        // 생성된 주문 ID 추출
+        long orderId = JsonPath.parse(orderResponse).read("$.data.id", Long.class);
+
+        // 재고가 7개인지 중간 확인
+        assertThat(productRepository.findById(productId).get().getStock()).isEqualTo(7);
+
+        // 2단계: 관리자 API로 주문 취소 호출
+        ResultActions resultActions = mvc.perform(
+                delete("/api/v1/admin/orders/%d".formatted(orderId))
+        ).andDo(print());
+
+        // 취소 확인
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("주문이 취소되었습니다."))
+                .andExpect(jsonPath("$.data.status").value("CANCELLED")); // 주문 상태가 취소인지 확인
+
+        // 재고 복구 확인 (10개)
+        Product restoredProduct = productRepository.findById(productId).get();
+        assertThat(restoredProduct.getStock()).isEqualTo(10);
     }
 
 }

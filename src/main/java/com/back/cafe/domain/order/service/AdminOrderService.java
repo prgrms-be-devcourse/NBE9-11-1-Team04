@@ -4,7 +4,10 @@ import com.back.cafe.domain.order.dto.OrderDto;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.entity.OrderStatus;
 import com.back.cafe.domain.order.repository.OrderRepository;
+import com.back.cafe.domain.product.entity.Product;
+import com.back.cafe.domain.product.service.ProductService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,13 +18,12 @@ import java.time.LocalDateTime;
  * 관리자 주문 상태 제어 비즈니스 로직을 담당하는 서비스
  */
 @Service
+@RequiredArgsConstructor
 public class AdminOrderService {
 
     private final OrderRepository orderRepository;
+    private final ProductService productService;
 
-    public AdminOrderService(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
 
     /**
      * 주문을 취소 상태로 변경한 뒤, 변경된 주문 정보를 반환한다.
@@ -35,6 +37,8 @@ public class AdminOrderService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
 
         order.setStatus(OrderStatus.CANCELLED.name());
+        productService.restoreStock(order.getOrderProducts());
+
         return order;
     }
 

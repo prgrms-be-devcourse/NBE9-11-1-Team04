@@ -4,6 +4,8 @@ import com.back.cafe.domain.order.controller.OrderController;
 import com.back.cafe.domain.order.entity.Order;
 import com.back.cafe.domain.order.repository.OrderRepository;
 import com.back.cafe.domain.order.service.OrderService;
+import com.back.cafe.domain.product.entity.Product;
+import com.back.cafe.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,15 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -34,6 +39,9 @@ public class OrderControllerTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("주문 신규 생성 테스트")
@@ -207,5 +215,121 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderDtos[0].status").value("PENDING"));
     }
 
+
+    @Test
+    @DisplayName("주문 생성 시 상품 재고 감소 검증")
+    void t5() throws Exception {
+        // 테스트용 상품 생성 (재고 10개)
+        Product p1 = productRepository.save(new Product("아메리카노", "커피", 4000L, 10, "설명", "url"));
+        Product p2 = productRepository.save(new Product("라떼", "커피", 4500L, 10, "설명", "url"));
+
+        long userId = 100;
+
+        // 주문 수행 (아메리카노 2개, 라떼 3개 주문)
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": %d, "quantity": 2 },
+                                            { "productId": %d, "quantity": 3 }
+                                          ],
+                                          "userId": %d
+                                        }
+                                        """.formatted(p1.getId(), p2.getId(), userId))
+                );
+
+        // 성공 응답(201-1) 확인
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("201-1"));
+
+        // DB 재고가 정확히 깎였는지 확인
+        Product P1 = productRepository.findById(p1.getId()).get();
+        Product P2 = productRepository.findById(p2.getId()).get();
+
+        assertThat(P1.getStock()).isEqualTo(8);  // 10 - 2
+        assertThat(P2.getStock()).isEqualTo(7);  // 10 - 3
+    }
+
+    @Test
+    @DisplayName("재고 부족 시 주문 실패 검증 (400 응답)")
+    void t6() throws Exception {
+        // 재고가 1개인 상품 생성
+        Product p = productRepository.save(new Product("희귀템", "ETC", 10000L, 1, "설명", "url"));
+        long userId = 101;
+
+        // 2개 주문 시도 (재고 부족 발생 -> 핸들러가 400 반환)
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": %d, "quantity": 2 }
+                                          ],
+                                          "userId": %d
+                                        }
+                                        """.formatted(p.getId(), userId))
+                )
+                .andDo(print());
+
+        // 핸들러가 메시지에 "재고"가 있어 400(BadRequest)을 뱉는지 확인
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.resultCode").value("400-1"))
+                .andExpect(jsonPath("$.msg").value("재고 부족"));
+
+        // 롤백 검증: 재고가 깎이지 않고 1인지 확인
+        Product P1 = productRepository.findById(p.getId()).get();
+        assertThat(P1.getStock()).isEqualTo(1);
+
+    }
+
+    @Test
+    @DisplayName("동시 주문 발생 시 재고 정합성 검증")
+    void t7_concurrency() throws Exception {
+        // 1. 준비: 재고가 100개인 상품 생성
+        Product p = productRepository.save(new Product("동시성테스트상품", "커피", 4000L, 100, "설명", "url"));
+        long productId = p.getId();
+        long userId = 102;
+
+        int threadCount = 100; // 동시에 보낼 요청 수
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount); // 모든 스레드가 끝날 때까지 대기하기 위한 장치
+
+        // 100명이 동시에 API 호출
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    mvc.perform(
+                            post("/api/v1/orders")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("""
+                                        {
+                                          "orderProductRequests": [
+                                            { "productId": %d, "quantity": 1 }
+                                          ],
+                                          "userId": %d
+                                        }
+                                        """.formatted(productId, userId))
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown(); // 작업 완료 신호
+                }
+            });
+        }
+
+        latch.await(); // 모든 요청이 끝날 때까지 대기
+
+        // 최종 재고 확인
+        Product updatedProduct = productRepository.findById(productId).get();
+        assertThat(updatedProduct.getStock()).isEqualTo(0);
+    }
 
 }
